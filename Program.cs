@@ -9,7 +9,20 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddDbContext<RestaurantContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDBConnection")));
+// Get current machine and use appropriate connectionString
+string machineName = Environment.MachineName;
+string connectionString;
+
+switch (machineName)
+{
+    case "DESKTOP-DAVID":
+        connectionString = builder.Configuration.GetConnectionString("DavidHomeDBConnection");
+        break;
+    default:
+        connectionString = builder.Configuration.GetConnectionString("LocalDBConnection");
+        break;
+}
+builder.Services.AddDbContext<RestaurantContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentity<CustomUser, IdentityRole>()
     .AddEntityFrameworkStores<RestaurantContext>();
