@@ -5,6 +5,7 @@ using System.Security.Claims;
 
 namespace Restaurant.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : Controller
