@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Linq;
 
 namespace Restaurant.Data
 {
@@ -11,24 +12,29 @@ namespace Restaurant.Data
             {
                 // Gebruiker aanmaken
                 // Admin bestaat nog niet?
-                if (userManager.FindByNameAsync("Admin").Result == null)
+                if (await userManager.FindByNameAsync("admin@foodbar.be") == null)
                 {
                     // Gebruiker voorzien
                     var defaultUser = new CustomUser
                     {
                         UserName = "admin@foodbar.be",
                         Email = "admin@foodbar.be",
-                        EmailConfirmed = true
+                        EmailConfirmed = true,
+                        LandId = 1,
+                        Actief = true,
                     };
 
                     // Gebruiker aanmaken
-                    await userManager.CreateAsync(defaultUser, "F00dB4r");
-
+                    var result = await userManager.CreateAsync(defaultUser, "F00d.B4r");
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
+                    }
                 }
             }
-            catch (DbException ex)
+            catch (Exception ex)
             {
-                throw new Exception(ex.Message.ToString());
+                throw new Exception("Seeding Failed", ex);
             }
         }
     }

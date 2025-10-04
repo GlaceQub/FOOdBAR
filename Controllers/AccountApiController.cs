@@ -1,22 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Dto.User;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Restaurant.Dto.Account;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Restaurant.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/account")]
     [ApiController]
-    public class UserController : Controller
+    public class AccountApiController : ControllerBase
     {
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<AccountApiController> _logger;
         private readonly IMapper _mapper;
         private readonly UserManager<CustomUser> _userManager;
         private readonly SignInManager<CustomUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserController(ILogger<UserController> logger,
+        public AccountApiController(ILogger<AccountApiController> logger,
                                 IMapper mapper,
                                 UserManager<CustomUser> userManager,
                                 SignInManager<CustomUser> signInManager,
@@ -29,14 +29,9 @@ namespace Restaurant.Controllers
             _roleManager = roleManager;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginDto model)
+        public async Task<IActionResult> Login(AccountLoginDto model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

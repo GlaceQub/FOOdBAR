@@ -17,8 +17,11 @@ namespace Restaurant.Models
         public bool IsSuggestie { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual Categorie Categorie { get; set; }
+        [JsonIgnore]
         public virtual ICollection<PrijsProduct> PrijsProducten { get; set; } = new List<PrijsProduct>();
+        [JsonIgnore]
         public virtual ICollection<Bestelling> Bestellingen { get; set; } = new List<Bestelling>();
 
     }
