@@ -4,22 +4,42 @@
     ViewData["Title"] = "Login Page";
 }
 
-<div class="row justify-content-center">
+<div class="container d-flex justify-content-center" style="margin-top: 120px;">
     <div class="col-md-4">
         <h2 class="mb-4 text-center">Login</h2>
+
+        @* Show non-field-specific errors at the top, styled for prominence *@
+        @{
+            var errors = ViewData.ModelState[string.Empty]?.Errors;
+            if (errors != null && errors.Count > 0)
+            {
+                <div class="alert alert-danger fw-bold text-center" role="alert">
+                    @foreach (var error in errors)
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            }
+        }
+
         <form asp-action="Login" method="post">
             <div class="mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <label asp-for="Email" class="form-label"></label><span class="text-danger">*</span>
+                <input asp-for="Email" class="form-control" type="email"/>
+                <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <label asp-for="Password" class="form-label"></label><span class="text-danger">*</span>
+                <input asp-for="Password" class="form-control" type="password"/>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+            <div class="mb-2">
+                <span class="text-muted small">Velden gemarkeerd met <span class="text-danger">*</span> zijn verplicht.</span>
             </div>
             <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
+
+        <a class="btn btn-outline-dark mt-3 w-100" asp-controller="Account" asp-action="Registratie">Account aanmaken</a>
     </div>
 </div>
 

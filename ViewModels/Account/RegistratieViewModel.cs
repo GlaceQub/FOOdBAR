@@ -1,12 +1,14 @@
-﻿namespace Restaurant.Dto.Account
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Restaurant.ViewModels.Account
 {
-    public class AccountRegistratieDto
+    public class RegistratieViewModel
     {
         [StringLength(50)]
         public string? Voornaam { get; set; }
 
         [StringLength(50)]
-        public string? Naam { get; set; } // Maps to Achternaam in CustomUser
+        public string? Naam { get; set; }
 
         [EmailAddress(ErrorMessage = "Ongeldig e-mailadres")]
         [Required(ErrorMessage = "E-mailadres is verplicht!")]
@@ -28,6 +30,8 @@
 
         [Required(ErrorMessage = "Land is verplicht!")]
         public int Land { get; set; }
+
+        public IEnumerable<SelectListItem>? Landen { get; set; }
 
         [Required(ErrorMessage = "Wachtwoord is verplicht!")]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Het wachtwoord moet minstens 6 tekens bevatten.")]
