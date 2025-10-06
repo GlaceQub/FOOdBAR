@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Account Dashboard";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome op het Account Dashboard</h1>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+            <button type="submit" class="nav-link btn btn-outline-danger">Logout</button>
+        </form>
+    }
+</div>
+

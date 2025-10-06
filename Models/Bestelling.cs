@@ -23,8 +23,11 @@ namespace Restaurant.Models
         public int StatusId { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual Reservatie Reservatie { get; set; }
+        [JsonIgnore]
         public virtual Product Product { get; set; }
+        [JsonIgnore]
         public virtual Status Status { get; set; }
     }
 }

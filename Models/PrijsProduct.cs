@@ -17,6 +17,7 @@ namespace Restaurant.Models
         public int ProductId { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual Product Product { get; set; }
 
     }
