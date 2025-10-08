@@ -31,6 +31,8 @@ namespace Restaurant.ViewModels.Account
         [Required(ErrorMessage = "Land is verplicht!")]
         public int Land { get; set; }
 
+        public string LandNaam { get; set; }
+
         public IEnumerable<SelectListItem>? Landen { get; set; }
 
         [Required(ErrorMessage = "Wachtwoord is verplicht!")]
