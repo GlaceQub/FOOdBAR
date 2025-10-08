@@ -33,6 +33,9 @@ switch (machineName)
     case "DESKTOP-DAVID":
         connectionString = builder.Configuration.GetConnectionString("DavidHomeDBConnection");
         break;
+    case "DESKTOP-K5018T2":
+        connectionString = builder.Configuration.GetConnectionString("LanderLaptopDBConnection");
+        break;
     default:
         connectionString = builder.Configuration.GetConnectionString("LocalDBConnection");
         break;
