@@ -1,4 +1,5 @@
 ﻿using Restaurant.ViewModels.Reservation;
+using System.Text.RegularExpressions;
 
 namespace Restaurant.Controllers
 {
@@ -15,12 +16,19 @@ namespace Restaurant.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            var tijdsloten = _context.Tijdslots
+                .Where(t => t.Actief)
+                .Select(t => new TijdslotDto
+                {
+                    Id = t.Id,
+                    Naam = Regex.Match(t.Naam, @"\d{1,2}u\d{0,2}\s*tot\s*\d{1,2}u\d{0,2}").Value
+                })
+                .ToList();
+
             var model = new ReservationViewModel
             {
-                BeschikbareTijdsloten = _context.Tijdslots
-                    .Where(t => t.Actief)
-                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
-                    .ToList()
+                LunchTijdsloten = tijdsloten.Where(t => t.Naam != null && t.Naam != "" && t.Naam.Contains("11u") || t.Naam.Contains("12u")).ToList(),
+                DinerTijdsloten = tijdsloten.Where(t => t.Naam != null && t.Naam != "" && t.Naam.Contains("17u") || t.Naam.Contains("19u")).ToList()
             };
             return View(model);
         }

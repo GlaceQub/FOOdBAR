@@ -16,8 +16,9 @@
         [Display(Name = "Speciale verzoeken")]
         public string? Opmerking { get; set; }
 
-        // Voor het dropdown-menu met tijdsloten
-        public List<TijdslotDto> BeschikbareTijdsloten { get; set; } = new();
+        public List<TijdslotDto> LunchTijdsloten { get; set; } = new();
+        public List<TijdslotDto> DinerTijdsloten { get; set; } = new();
+        public List<TijdslotDto> BeschikbareTijdsloten { get; set; }
     }
 
     // Eenvoudige DTO voor tijdslot-selectie
