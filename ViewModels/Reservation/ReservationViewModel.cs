@@ -18,7 +18,6 @@
 
         public List<TijdslotDto> LunchTijdsloten { get; set; } = new();
         public List<TijdslotDto> DinerTijdsloten { get; set; } = new();
-        public List<TijdslotDto> BeschikbareTijdsloten { get; set; }
     }
 
     // Eenvoudige DTO voor tijdslot-selectie

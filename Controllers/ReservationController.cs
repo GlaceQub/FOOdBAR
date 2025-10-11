@@ -1,5 +1,5 @@
 ﻿using Restaurant.ViewModels.Reservation;
-using System.Text.RegularExpressions;
+using System.Security.Claims;
 
 namespace Restaurant.Controllers
 {
@@ -16,19 +16,16 @@ namespace Restaurant.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var tijdsloten = _context.Tijdslots
-                .Where(t => t.Actief)
-                .Select(t => new TijdslotDto
-                {
-                    Id = t.Id,
-                    Naam = Regex.Match(t.Naam, @"\d{1,2}u\d{0,2}\s*tot\s*\d{1,2}u\d{0,2}").Value
-                })
-                .ToList();
-
             var model = new ReservationViewModel
             {
-                LunchTijdsloten = tijdsloten.Where(t => t.Naam != null && t.Naam != "" && t.Naam.Contains("11u") || t.Naam.Contains("12u")).ToList(),
-                DinerTijdsloten = tijdsloten.Where(t => t.Naam != null && t.Naam != "" && t.Naam.Contains("17u") || t.Naam.Contains("19u")).ToList()
+                LunchTijdsloten = _context.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList(),
+                DinerTijdsloten = _context.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList()
             };
             return View(model);
         }
@@ -39,8 +36,12 @@ namespace Restaurant.Controllers
         public IActionResult Create(ReservationViewModel model)
         {
             // Herlaad tijdsloten bij fout
-            model.BeschikbareTijdsloten = _context.Tijdslots
-                .Where(t => t.Actief)
+            model.LunchTijdsloten = _context.Tijdslots
+                .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
+                .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                .ToList();
+            model.DinerTijdsloten = _context.Tijdslots
+                .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
                 .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                 .ToList();
 
@@ -49,28 +50,39 @@ namespace Restaurant.Controllers
                 return View(model);
             }
 
-            // Maak een nieuwe Reservatie aan
+            var klantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(klantId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var reservatie = new Reservatie
             {
                 Datum = model.Datum,
                 TijdSlotId = model.TijdSlotId,
                 AantalPersonen = model.AantalPersonen,
                 Opmerking = model.Opmerking,
-                // KlantId moet hier gezet worden als de gebruiker is ingelogd
-                // Bijvoorbeeld: KlantId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                KlantId = klantId
             };
 
             _context.Reservaties.Add(reservatie);
             _context.SaveChanges();
 
-            return RedirectToAction("Confirmation");
+            return RedirectToAction("Confirmation", new { id = reservatie.Id });
         }
 
-        // GET: /Reservation/Confirmation
+        // GET: /Reservation/Confirmation/{id}
         [HttpGet]
-        public IActionResult Confirmation()
+        public IActionResult Confirmation(int id)
         {
-            return View();
+            var reservatie = _context.Reservaties
+                .Include(r => r.Tijdslot)
+                .FirstOrDefault(r => r.Id == id);
+
+            if (reservatie == null)
+                return NotFound();
+
+            return View(reservatie);
         }
     }
 }
