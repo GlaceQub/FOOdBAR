@@ -13,6 +13,7 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Reservation/Create
+        [Authorize]
         [HttpGet]
         public IActionResult Create()
         {
