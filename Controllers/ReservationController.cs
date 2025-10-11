@@ -56,6 +56,27 @@ namespace Restaurant.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            // Zoek alle tafels die actief zijn en geschikt zijn voor het aantal personen
+            var beschikbareTafels = _context.Tafels
+                .Where(t => t.Actief && t.MinAantalPersonen <= model.AantalPersonen && t.AantalPersonen >= model.AantalPersonen)
+                .ToList();
+
+            // Zoek alle reeds gereserveerde tafels voor deze datum en tijdslot
+            var reedsGereserveerdeTafelIds = _context.TafelLijsten
+                .Where(tl => tl.Reservatie.Datum == model.Datum && tl.Reservatie.TijdSlotId == model.TijdSlotId)
+                .Select(tl => tl.TafelId)
+                .ToList();
+
+            // Zoek een vrije tafel
+            var vrijeTafel = beschikbareTafels.FirstOrDefault(t => !reedsGereserveerdeTafelIds.Contains(t.Id));
+
+            if (vrijeTafel == null)
+            {
+                // Geen tafel beschikbaar: toon foutmelding of alternatieven
+                ModelState.AddModelError("", "Er is geen tafel beschikbaar voor het gekozen tijdslot en aantal personen. Kies een ander tijdslot.");
+                return View(model);
+            }
+
             var reservatie = new Reservatie
             {
                 Datum = model.Datum,
@@ -66,6 +87,15 @@ namespace Restaurant.Controllers
             };
 
             _context.Reservaties.Add(reservatie);
+            _context.SaveChanges();
+
+            // Koppel de tafel aan de reservatie
+            var tafelLijst = new TafelLijst
+            {
+                ReservatieId = reservatie.Id,
+                TafelId = vrijeTafel.Id
+            };
+            _context.TafelLijsten.Add(tafelLijst);
             _context.SaveChanges();
 
             return RedirectToAction("Confirmation", new { id = reservatie.Id });
