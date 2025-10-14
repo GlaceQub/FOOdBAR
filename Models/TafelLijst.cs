@@ -14,7 +14,9 @@ namespace Restaurant.Models
         public int TafelId { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual Reservatie Reservatie { get; set; }
+        [JsonIgnore]
         public virtual Tafel Tafel { get; set; }
     }
 }

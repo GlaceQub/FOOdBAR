@@ -1,0 +1,43 @@
+﻿@model Restaurant.ViewModels.Account.RegistratieViewModel
+
+@{
+    ViewData["Title"] = "Registratie Bevestigen";
+}
+
+<div class="container d-flex justify-content-center" style="margin-top: 60px;">
+    <div class="col-md-8">
+        <h2 class="mb-4 text-center">Bevestig uw gegevens</h2>
+        <form asp-action="RegistratieBevestigen" method="post">
+            <dl class="row">
+                <dt class="col-sm-4">E-mailadres</dt>
+                <dd class="col-sm-8">@Model.Email</dd>
+                <dt class="col-sm-4">Voornaam</dt>
+                <dd class="col-sm-8">@Model.Voornaam</dd>
+                <dt class="col-sm-4">Naam</dt>
+                <dd class="col-sm-8">@Model.Naam</dd>
+                <dt class="col-sm-4">Adres</dt>
+                <dd class="col-sm-8">@Model.Adres</dd>
+                <dt class="col-sm-4">Huisnummer</dt>
+                <dd class="col-sm-8">@Model.Huisnummer</dd>
+                <dt class="col-sm-4">Postcode</dt>
+                <dd class="col-sm-8">@Model.Postcode</dd>
+                <dt class="col-sm-4">Gemeente</dt>
+                <dd class="col-sm-8">@Model.Gemeente</dd>
+                <dt class="col-sm-4">Land</dt>
+                <dd class="col-sm-8">@Model.LandNaam</dd>
+            </dl>
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="Voornaam" />
+            <input type="hidden" asp-for="Naam" />
+            <input type="hidden" asp-for="Adres" />
+            <input type="hidden" asp-for="Huisnummer" />
+            <input type="hidden" asp-for="Postcode" />
+            <input type="hidden" asp-for="Gemeente" />
+            <input type="hidden" asp-for="Land" />
+            <input type="hidden" asp-for="Password" />
+            <input type="hidden" asp-for="ConfirmPassword" />
+            <button type="submit" class="btn btn-primary w-100">Account aanmaken</button>
+            <button type="submit" name="terug" value="true" formaction="/Account/Registratie" class="btn btn-dark w-100 mt-2">Terug</button>
+        </form>
+    </div>
+</div>

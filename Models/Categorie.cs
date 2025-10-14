@@ -12,7 +12,9 @@ namespace Restaurant.Models
         public int TypeId { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual CategorieType Type { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Product> Producten { get; set; } = new List<Product>();
 
     }
