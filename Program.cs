@@ -163,7 +163,8 @@ using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<IdentitySeeding>();
     UserManager<CustomUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<CustomUser>>();
-    await seeder.IdentitySeedingAsync(userManager);
+    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await seeder.IdentitySeedingAsync(userManager, roleManager);
 }
 
 app.Run();
