@@ -1,7 +1,7 @@
 ﻿
 namespace Restaurant.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Eigenaar, Zaalverantwoordelijke")]
     public class TafelController : Controller
     {
         private readonly RestaurantContext _context;
@@ -21,7 +21,11 @@ namespace Restaurant.Controllers
         // GET: /Tafel/Create
         public IActionResult Create()
         {
-            return View();
+            var tafel = new Tafel
+            {
+                Actief = true
+            };
+            return View(tafel);
         }
 
         // POST: /Tafel/Create
@@ -29,6 +33,12 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Tafel tafel)
         {
+
+            if (tafel.MinAantalPersonen > tafel.AantalPersonen)
+            {
+                ModelState.AddModelError(nameof(tafel.MinAantalPersonen), "Minimum aantal personen mag niet hoger zijn dan het aantal personen.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Tafels.Add(tafel);

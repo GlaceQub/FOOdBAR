@@ -9,9 +9,11 @@
         <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
             <button type="submit" class="nav-link btn btn-outline-danger">Logout</button>
         </form>
-        <a asp-controller="Tafel" asp-action="Index" class="btn btn-primary mt-3 ms-2">
-            Tafels beheren
-        </a>
+        @if (User.IsInRole("Eigenaar") || User.IsInRole("Zaalverantwoordelijke"))
+        {
+            <a asp-controller="Tafel" asp-action="Index" class="btn btn-primary mt-3 ms-2">
+                Tafels beheren
+            </a>
+        }
     }
 </div>
-
