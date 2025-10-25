@@ -1,0 +1,29 @@
+﻿@model List<Restaurant.ViewModels.Tafel.TafelToewijzenViewModel>
+@{
+    ViewData["Title"] = "Tafels toewijzen";
+}
+
+<h2>Tafels toewijzen</h2>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+@foreach (var item in Model)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <strong>Reservatie @item.Reservatie.Id</strong><br />
+            <strong>Klant:</strong> @item.Reservatie.CustomUser.Voornaam @item.Reservatie.CustomUser.Achternaam, <strong>Datum:</strong> @item.Reservatie.Datum?.ToShortDateString(), <strong>Tijdslot:</strong> @item.Reservatie.Tijdslot?.Naam
+            <form asp-action="ToewijsTafel" method="post" class="mt-2">
+                <input type="hidden" name="reservatieId" value="@item.Reservatie.Id" />
+                <select name="tafelId" class="form-select d-inline w-auto">
+                    @foreach (var tafel in item.BeschikbareTafels)
+                    {
+                        <option value="@tafel.Id">Tafel @tafel.TafelNummer</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary ms-2">Toewijzen</button>
+            </form>
+        </div>
+    </div>
+}
