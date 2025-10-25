@@ -1,7 +1,7 @@
 ﻿
 namespace Restaurant.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Eigenaar, Zaalverantwoordelijke")]
     public class TafelController : Controller
     {
         private readonly RestaurantContext _context;
