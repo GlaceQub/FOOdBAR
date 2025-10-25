@@ -9,7 +9,8 @@ public class BestellingCreateViewModel
 
     public IEnumerable<CategorieViewModel> MenuOverzicht { get; set; } = new List<CategorieViewModel>();
     public Dictionary<int, int> SelectedItems { get; set; } = new();
-    public List<CartItemViewModel> CartItems { get; set; } = new List<CartItemViewModel>();
+    public List<CartItemWithProductViewModel> CartItemsWithProduct { get; set; } = new();
     public decimal TotaalBedrag { get; set; }
     public bool NetworkError { get; set; }
+    public List<CategorieTypeViewModel> MenuTypes { get; set; } = new();
 }
