@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Data.Repository;
+using Restaurant.Data.UnitOfWork; // Voeg deze using toe
 using Restaurant.Models;
 using Restaurant.ViewModels.Reservation;
 using Restaurant.ViewModels.Tafel;
@@ -11,13 +12,11 @@ namespace Restaurant.Controllers
 {
     public class ReservationController : Controller
     {
-        private readonly ReservatieRepository _reservatieRepository;
-        private readonly RestaurantContext _context; // Voor tijdsloten
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ReservationController(ReservatieRepository reservatieRepository, RestaurantContext context)
+        public ReservationController(IUnitOfWork unitOfWork)
         {
-            _reservatieRepository = reservatieRepository;
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: /Reservation/Create
@@ -28,11 +27,11 @@ namespace Restaurant.Controllers
             var model = new ReservationViewModel
             {
                 Datum = DateTime.Today,
-                LunchTijdsloten = _context.Tijdslots
+                LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                     .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList(),
-                DinerTijdsloten = _context.Tijdslots
+                DinerTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                     .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList()
@@ -45,12 +44,11 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ReservationViewModel model)
         {
-            // Herlaad tijdsloten bij fout
-            model.LunchTijdsloten = _context.Tijdslots
+            model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                 .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
                 .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                 .ToList();
-            model.DinerTijdsloten = _context.Tijdslots
+            model.DinerTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                 .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
                 .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                 .ToList();
@@ -66,7 +64,7 @@ namespace Restaurant.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var beschikbareTafels = _reservatieRepository.GetBeschikbareTafels(
+            var beschikbareTafels = _unitOfWork.Reservaties.GetBeschikbareTafels(
                 model.Datum, model.TijdSlotId, model.AantalPersonen
             ).ToList();
 
@@ -86,8 +84,9 @@ namespace Restaurant.Controllers
                 KlantId = klantId
             };
 
-            _reservatieRepository.Add(reservatie);
-            _reservatieRepository.KoppelTafelAanReservatie(reservatie.Id, vrijeTafel.Id);
+            _unitOfWork.Reservaties.Add(reservatie);
+            _unitOfWork.Reservaties.KoppelTafelAanReservatie(reservatie.Id, vrijeTafel.Id);
+            _unitOfWork.Save();
 
             return RedirectToAction("Confirmation", new { id = reservatie.Id });
         }
@@ -96,38 +95,36 @@ namespace Restaurant.Controllers
         [HttpGet]
         public IActionResult Confirmation(int id)
         {
-            var reservatie = _reservatieRepository.GetById(id);
+            var reservatie = _unitOfWork.Reservaties.GetById(id);
             if (reservatie == null)
                 return NotFound();
 
             return View(reservatie);
         }
 
-        // Extra: Overzicht van reservaties (optioneel)
         [Authorize(Roles = "Eigenaar,Zaalverantwoordelijke")]
         [HttpGet]
         public IActionResult Index()
         {
-            var reservaties = _reservatieRepository.GetAll();
+            var reservaties = _unitOfWork.Reservaties.GetAll();
             return View(reservaties);
         }
 
-        // Extra: Verwijder een reservatie (optioneel)
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            _reservatieRepository.Delete(id);
+            _unitOfWork.Reservaties.Delete(id);
+            _unitOfWork.Save();
             return RedirectToAction("Index");
         }
 
-        // Extra: Bewerk een reservatie (optioneel)
         [Authorize]
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var reservatie = _reservatieRepository.GetById(id);
+            var reservatie = _unitOfWork.Reservaties.GetById(id);
             if (reservatie == null)
                 return NotFound();
 
@@ -137,11 +134,11 @@ namespace Restaurant.Controllers
                 TijdSlotId = reservatie.TijdSlotId,
                 AantalPersonen = reservatie.AantalPersonen,
                 Opmerking = reservatie.Opmerking,
-                LunchTijdsloten = _context.Tijdslots
+                LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                     .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList(),
-                DinerTijdsloten = _context.Tijdslots
+                DinerTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                     .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList()
@@ -156,18 +153,18 @@ namespace Restaurant.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.LunchTijdsloten = _context.Tijdslots
+                model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                     .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList();
-                model.DinerTijdsloten = _context.Tijdslots
+                model.DinerTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                     .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList();
                 return View(model);
             }
 
-            var reservatie = _reservatieRepository.GetById(id);
+            var reservatie = _unitOfWork.Reservaties.GetById(id);
             if (reservatie == null)
                 return NotFound();
 
@@ -176,7 +173,8 @@ namespace Restaurant.Controllers
             reservatie.AantalPersonen = model.AantalPersonen;
             reservatie.Opmerking = model.Opmerking;
 
-            _reservatieRepository.Update(reservatie);
+            _unitOfWork.Reservaties.Update(reservatie);
+            _unitOfWork.Save();
 
             return RedirectToAction("Index");
         }
@@ -185,13 +183,13 @@ namespace Restaurant.Controllers
         [HttpGet]
         public IActionResult Toewijzen()
         {
-            var reservaties = _reservatieRepository.GetReservatiesZonderTafel()
-                .OrderBy(r => r.Tafellijsten.FirstOrDefault()?.Tafel.TafelNummer ?? ""); // Sorteer op tafelnummer indien mogelijk
+            var reservaties = _unitOfWork.Reservaties.GetReservatiesZonderTafel()
+                .OrderBy(r => r.Tafellijsten.FirstOrDefault()?.Tafel.TafelNummer ?? "");
 
             var viewModels = reservaties.Select(r => new TafelToewijzenViewModel
             {
                 Reservatie = r,
-                BeschikbareTafels = _reservatieRepository.GetBeschikbareTafels(
+                BeschikbareTafels = _unitOfWork.Reservaties.GetBeschikbareTafels(
                     r.Datum ?? DateTime.Today, r.TijdSlotId, r.AantalPersonen)
             }).ToList();
 
@@ -203,14 +201,15 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ToewijsTafel(int reservatieId, int tafelId)
         {
-            _reservatieRepository.KoppelTafelAanReservatie(reservatieId, tafelId);
+            _unitOfWork.Reservaties.KoppelTafelAanReservatie(reservatieId, tafelId);
 
-            var tafel = _reservatieRepository.GetTafelById(tafelId);
+            var tafel = _unitOfWork.Reservaties.GetTafelById(tafelId);
             if (tafel != null)
             {
-                _reservatieRepository.UpdateTafel(tafel);
+                _unitOfWork.Reservaties.UpdateTafel(tafel);
             }
 
+            _unitOfWork.Save();
             TempData["Message"] = "Tafel succesvol toegewezen!";
             return RedirectToAction("Toewijzen");
         }

@@ -1,7 +1,7 @@
 ﻿
 namespace Restaurant.Data.Repository
 {
-    public class ReservatieRepository
+    public class ReservatieRepository : IReservatieRepository
     {
         private readonly RestaurantContext _context;
 
