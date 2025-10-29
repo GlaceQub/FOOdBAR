@@ -7,42 +7,30 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@100..700&display=swap" rel="stylesheet">
 @*     <link rel="stylesheet" href="~/Restaurant.styles.css" asp-append-version="true" /> *@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-md navbar-light border-bottom box-shadow">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FOOdBAR</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Photos" asp-action="Index">Foto's</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Reserveren" asp-action="Index">Reserveren</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto mb-2 mb-md-0">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Aanmelden" asp-action="Index">Aanmelden</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+        <nav class="custom-navbar">
+            <a class="navbar-brand mx-auto" href="/">
+                <img src="~/img/Logo-FOOdBAR.png" alt="FOOdBAR Logo" class="logo-navbar" />
+            </a>
+            <ul class="navbar-nav flex-row justify-content-center w-100 mt-3">
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Photos" asp-action="Index">Foto's</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Reserveren" asp-action="Index">Reserveren</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
+                </li>
+            </ul>
+            <a class="nav-link navbar-login" asp-area="" asp-controller="Aanmelden" asp-action="Index">Aanmelden</a>
         </nav>
     </header>
     <div class="container">
