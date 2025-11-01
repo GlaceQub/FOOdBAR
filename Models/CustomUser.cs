@@ -18,7 +18,9 @@ namespace Restaurant.Models
         public int LandId { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual Land Land { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Reservatie> Reservaties { get; set; } = new List<Reservatie>();
 
     }

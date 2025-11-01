@@ -8,6 +8,7 @@
         public bool Actief { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual ICollection<Categorie> Categorieen { get; set; } = new List<Categorie>();
 
     }

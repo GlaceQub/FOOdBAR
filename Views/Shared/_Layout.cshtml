@@ -16,7 +16,7 @@
             <a class="navbar-brand mx-auto" href="/">
                 <img src="~/img/Logo-FOOdBAR.png" alt="FOOdBAR Logo" class="logo-navbar" />
             </a>
-            <ul class="navbar-nav flex-row justify-content-center w-100 mt-3">
+            <ul class="navbar-nav flex-grow-1">
                 <li class="nav-item">
                     <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
                 </li>
@@ -28,6 +28,18 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a class="nav-link btn btn-outline-primary" asp-area="" asp-controller="Account" asp-action="Dashboard">Account</a>
+                    }
+                    else
+                    {
+                        <a class="nav-link btn btn-outline-primary" asp-area="" asp-controller="Account" asp-action="Login">Aanmelden</a>
+                    }
                 </li>
             </ul>
             <a class="nav-link navbar-login" asp-area="" asp-controller="Aanmelden" asp-action="Index">Aanmelden</a>

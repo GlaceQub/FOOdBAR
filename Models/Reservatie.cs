@@ -29,9 +29,14 @@ namespace Restaurant.Models
         public string? EvaluatieOpmerkingen { get; set; }
 
         // Navigation properties
+        [JsonIgnore]
         public virtual CustomUser CustomUser { get; set; }
+        [JsonIgnore]
         public virtual Tijdslot Tijdslot { get; set; }
-        public virtual ICollection<TafelLijst> Tafellijsten { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<TafelLijst> Tafellijsten { get; set; } = new List<TafelLijst>();
+        [JsonIgnore]
         public virtual ICollection<Bestelling> Bestellingen { get; set; } = new List<Bestelling>();
+
     }
 }
