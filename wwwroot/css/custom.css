@@ -1,0 +1,193 @@
+﻿:root {
+    --color-white: #FFFFFF;
+    --color-offwhite: #FFF9EB;
+    --color-orange: #FA9500;
+    --color-darkred: #A33100;
+    --color-darkgray: #2F3137;
+}
+
+html, body {
+    font-family: 'Antonio', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* NAVBAR */
+.custom-navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: var(--color-darkred);
+    padding: 1rem 0 1rem 0;
+    box-shadow: 0 2px 8px rgba(47,49,55,0.08);
+    border: none;
+}
+
+.logo-navbar {
+    height: 50px;
+    margin-bottom: 0rem; 
+}
+
+.custom-navbar .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.custom-navbar .nav-link {
+    color: var(--color-offwhite) !important;
+    font-size: 1.25rem;
+    text-align: center;
+    transition: color 0.2s, border-bottom 0.2s;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    font-family: 'Antonio', Arial, sans-serif;
+}
+
+    .custom-navbar .nav-link:hover,
+    .custom-navbar .nav-link.active {
+        color: var(--color-orange) !important;
+        background: rgba(255,249,235,0.08);
+        border-bottom: 2px solid var(--color-orange);
+    }
+
+.navbar-login {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    color: var(--color-offwhite) !important;
+    font-size: 1.25rem;
+    font-family: 'Antonio', Arial, sans-serif;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    transition: color 0.2s, border-bottom 0.2s, background 0.2s;
+    z-index: 10;
+    background: none;
+    text-decoration: none;
+}
+
+    .navbar-login:hover,
+    .navbar-login.active {
+        color: var(--color-orange) !important;
+        background: rgba(255,249,235,0.08);
+        border-bottom: 2px solid var(--color-orange);
+    }
+
+.custom-navbar {
+    position: relative; /* nodig voor absolute positioning van .navbar-login */
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background-color: var(--color-darkred) !important;
+        padding-bottom: 1rem;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .navbar-nav .nav-link {
+        color: var(--color-white) !important;
+    }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--color-orange) !important;
+            background: rgba(0,0,0,0.08);
+            border-bottom: none;
+        }
+}
+
+/* HERO SECTION */
+.hero-section {
+    position: relative;
+    width: 100vw;
+    height: calc(100vh - 98px);
+    min-height: O;
+    margin-left: calc(-50vw + 50%);
+    background-image: url('/img/HeroImgFOOdBAR.jpg');
+    background-size: cover;
+    background-position: center;
+    background-color: var(--color-offwhite);
+}
+
+/* Reserveer-knop rechtsboven */
+.reserveer-knop {
+    position: absolute;
+    top: 30px;
+    right: 5%;
+    z-index: 2;
+    background-color: var(--color-orange);
+    text-decoration: none;
+    border: none;
+    color: var(--color-darkgray);
+    font-size: 2rem;
+    padding: 0.75em 2em;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(47,49,55,0.08);
+    transition: background 0.2s, color 0.2s;
+    font-weight: 600;
+}
+
+    .reserveer-knop:hover,
+    .reserveer-knop:focus {
+        background-color: var(--color-darkred);
+        color: var(--color-white);
+    }
+
+/* Info box linksonder */
+.info-box {
+    position: absolute;
+    left: 50px;
+    bottom: 30px;
+    width: 350px;
+    background: var(--color-offwhite);
+    box-shadow: 0 4px 16px rgba(47,49,55,0.10);
+    border-radius: 12px;
+    padding: 1.5em 1.2em;
+    z-index: 2;
+    font-size: 1rem;
+    color: var(--color-darkgray);
+}
+
+    .info-box h5 {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        font-weight: bold;
+        color: var(--color-darkred);
+    }
+
+/* Responsive: onder elkaar op mobiel */
+@media (max-width: 768px) {
+    .hero-section {
+        height: auto;
+        min-height: 350px;
+        padding-top: 110px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .reserveer-knop,
+    .info-box {
+        position: static;
+        width: 90vw;
+        max-width: 100%;
+        margin: 20px auto 0 auto;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        text-align: center;
+    }
+
+    .info-box {
+        margin-top: 10px;
+        padding: 1em 0.5em;
+    }
+}
