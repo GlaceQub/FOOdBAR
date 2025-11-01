@@ -30,20 +30,16 @@
                     <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <a class="nav-link btn btn-outline-primary" asp-area="" asp-controller="Account" asp-action="Dashboard">Account</a>
-                    }
-                    else
-                    {
-                        <a class="nav-link btn btn-outline-primary" asp-area="" asp-controller="Account" asp-action="Login">Aanmelden</a>
-                    }
-                </li>
-            </ul>
-            <a class="nav-link navbar-login" asp-area="" asp-controller="Aanmelden" asp-action="Index">Aanmelden</a>
-        </nav>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a class="nav-link navbar-login" asp-area="" asp-controller="Account" asp-action="Dashboard">Account</a>
+            }
+            else
+            {
+                <a class="nav-link navbar-login" asp-area="" asp-controller="Account" asp-action="Login">Aanmelden</a>
+            }
+
+         </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
