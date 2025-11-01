@@ -37,5 +37,6 @@ namespace Restaurant.Models
         public virtual ICollection<TafelLijst> Tafellijsten { get; set; } = new List<TafelLijst>();
         [JsonIgnore]
         public virtual ICollection<Bestelling> Bestellingen { get; set; } = new List<Bestelling>();
+
     }
 }

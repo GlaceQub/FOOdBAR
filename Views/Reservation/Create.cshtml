@@ -11,7 +11,7 @@
             <form method="post" id="reservationForm">
                 <div class="mb-3">
                     <label asp-for="Datum" class="form-label">Datum</label>
-                    <input asp-for="Datum" class="form-control" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    <input asp-for="Datum" class="form-control" type="date" required/>
                     <span asp-validation-for="Datum" class="text-danger"></span>
                 </div>
                 

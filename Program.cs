@@ -21,6 +21,7 @@ builder.Configuration.GetRequiredSection(nameof(Settings)).Bind(Token.Settings);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ReservatieRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
