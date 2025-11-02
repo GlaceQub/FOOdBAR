@@ -156,6 +156,13 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseStatusCodePages(async context =>
+{
+    if (context.HttpContext.Response.StatusCode == 404)
+    {
+        context.HttpContext.Response.Redirect("/UnderConstruction");
+    }
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(

@@ -4,36 +4,53 @@
     ViewData["Title"] = "Tafel toevoegen";
 }
 
-<h2>Tafel toevoegen</h2>
+<h2 class="mb-4">Tafel toevoegen</h2>
 
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label asp-for="TafelNummer" class="control-label">Tafelnummer</label>
-        <input asp-for="TafelNummer" class="form-control" />
-        <span asp-validation-for="TafelNummer" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="AantalPersonen" class="control-label">Aantal personen</label>
-        <input asp-for="AantalPersonen" class="form-control" />
-        <span asp-validation-for="AantalPersonen" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="MinAantalPersonen" class="control-label">Minimum aantal personen</label>
-        <input asp-for="MinAantalPersonen" class="form-control" />
-        <span asp-validation-for="MinAantalPersonen" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="QrBarcode" class="control-label">Barcode</label>
-        <input asp-for="QrBarcode" class="form-control" />
-        <span asp-validation-for="QrBarcode" class="text-danger"></span>
-    </div>
-    <div class="form-group form-check">
-        <input asp-for="Actief" class="form-check-input" />
-        <label asp-for="Actief" class="form-check-label"></label>
-    </div>
-    <button type="submit" class="btn btn-primary">Toevoegen</button>
-    <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
-</form>
+<div class="tafel-form-container mx-auto">
+    <form asp-action="Create" method="post">
+        <div class="form-table">
+            <div class="form-row">
+                <label asp-for="TafelNummer" class="form-label">Tafelnummer</label>
+                <div>
+                    <input asp-for="TafelNummer" class="form-control" />
+                    <span asp-validation-for="TafelNummer" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <label asp-for="AantalPersonen" class="form-label">Aantal personen</label>
+                <div>
+                    <input asp-for="AantalPersonen" class="form-control" />
+                    <span asp-validation-for="AantalPersonen" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <label asp-for="MinAantalPersonen" class="form-label">Minimum aantal personen</label>
+                <div>
+                    <input asp-for="MinAantalPersonen" class="form-control" />
+                    <span asp-validation-for="MinAantalPersonen" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <label asp-for="QrBarcode" class="form-label">Barcode</label>
+                <div>
+                    <input asp-for="QrBarcode" class="form-control" />
+                    <span asp-validation-for="QrBarcode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-row align-items-center">
+                <label asp-for="Actief" class="form-label"></label>
+                <div>
+                    <input asp-for="Actief" class="form-check-input" />
+                    <span asp-validation-for="Actief" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Toevoegen</button>
+            <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     @{

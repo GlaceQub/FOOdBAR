@@ -24,15 +24,25 @@
                     <a class="nav-link" asp-area="" asp-controller="Photos" asp-action="Index">Foto's</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Reserveren" asp-action="Index">Reserveren</a>
+                    <a class="nav-link" asp-controller="Reservation" asp-action="Create" asp-action="Index">Reserveren</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
                 </li>
             </ul>
+            @* Plaats dit op de plek van de Account/Aanmelden knop in je navbar *@
             @if (User.Identity.IsAuthenticated)
             {
-                <a class="nav-link navbar-login" asp-area="" asp-controller="Account" asp-action="Dashboard">Account</a>
+                if (Context.Request.Path.StartsWithSegments("/Account/Dashboard", StringComparison.OrdinalIgnoreCase))
+                {
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                        <button type="submit" class="nav-link navbar-login">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="nav-link navbar-login" asp-area="" asp-controller="Account" asp-action="Dashboard">Account</a>
+                }
             }
             else
             {
