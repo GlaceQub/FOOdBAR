@@ -30,7 +30,6 @@
                     <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
                 </li>
             </ul>
-            @* Plaats dit op de plek van de Account/Aanmelden knop in je navbar *@
             @if (User.Identity.IsAuthenticated)
             {
                 if (Context.Request.Path.StartsWithSegments("/Account/Dashboard", StringComparison.OrdinalIgnoreCase))
