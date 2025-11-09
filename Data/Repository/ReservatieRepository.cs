@@ -14,10 +14,11 @@ namespace Restaurant.Data.Repository
         public IEnumerable<Reservatie> GetAll()
         {
             return _context.Reservaties
+                .Include(r => r.CustomUser)
                 .Include(r => r.Tafellijsten)
-                    .ThenInclude(tl => tl.Tafel)
+                .ThenInclude(tl => tl.Tafel)
                 .Include(r => r.Tijdslot)
-                .ToList();
+                .ToList() ?? new List<Reservatie>();
         }
 
         // Haal een reservatie op via id

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Data.Repository;
-using Restaurant.Data.UnitOfWork; // Voeg deze using toe
+using Restaurant.Data.UnitOfWork;
 using Restaurant.Models;
 using Restaurant.ViewModels.Reservation;
 using Restaurant.ViewModels.Tafel;
@@ -10,6 +10,7 @@ using System.Security.Claims;
 
 namespace Restaurant.Controllers
 {
+    [Authorize(Roles = "Eigenaar")]
     public class ReservationController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Restaurant.Models.Reservatie>
+
+<h1>Reservaties</h1>
+<table class="table tafel-table align-middle">
+    <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Tijdslot</th>
+            <th>Aantal personen</th>
+            <th>Klant</th>
+            <th>Opmerkingen</th>
+            <th>Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Datum?.ToString("dd-MM-yyyy")</td>
+                <td>@r.Tijdslot?.Naam</td>
+                <td>@r.AantalPersonen</td>
+                <td>@r.CustomUser?.VolledigeNaam</td>
+                <td>@r.Opmerking</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@r.Id" class="btn btn-warning btn-sm">Wijzigen</a>
+                    <a asp-action="Delete" asp-route-id="@r.Id" class="btn btn-danger btn-sm">Verwijderen</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
