@@ -48,10 +48,18 @@ namespace Restaurant.Data.Repository
         // Verwijder een reservatie
         public void Delete(int id)
         {
-            var reservatie = _context.Reservaties.Find(id);
+            var reservatie = _context.Reservaties
+                    .Include(r => r.Tafellijsten)
+                    .FirstOrDefault(r => r.Id == id);
+
             if (reservatie != null)
             {
+                // Verwijder alle gekoppelde TafelLijst-entries
+                _context.TafelLijsten.RemoveRange(reservatie.Tafellijsten);
+
+                // Verwijder de reservatie zelf
                 _context.Reservaties.Remove(reservatie);
+
                 _context.SaveChanges();
             }
         }
