@@ -131,6 +131,7 @@ namespace Restaurant.Controllers
 
             var model = new ReservationViewModel
             {
+                Id = reservatie.Id,
                 Datum = reservatie.Datum ?? DateTime.Today,
                 TijdSlotId = reservatie.TijdSlotId,
                 AantalPersonen = reservatie.AantalPersonen,
@@ -144,6 +145,9 @@ namespace Restaurant.Controllers
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList()
             };
+
+            ViewBag.TijdslotId = new SelectList(_unitOfWork.RestaurantContext.Tijdslots.Where(t => t.Actief), "Id", "Naam", model.TijdSlotId);
+
             return View(model);
         }
 
@@ -162,6 +166,9 @@ namespace Restaurant.Controllers
                     .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList();
+
+                ViewBag.TijdslotId = new SelectList(_unitOfWork.RestaurantContext.Tijdslots.Where(t => t.Actief), "Id", "Naam", model.TijdSlotId);
+
                 return View(model);
             }
 
