@@ -15,14 +15,62 @@ namespace Restaurant.Controllers
             _hubContext = hubContext;
         }
 
+        #region Index (overzicht bestellingen)
         [Authorize(Roles = "Eigenaar, Kok, Ober")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var bestellingen = await _unitOfWork.Bestellingen.GetAllAsync();
-            return View(bestellingen);
+
+            // Bepaal filter voor Ober of Kok
+            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            var filteredBestellingen = bestellingen;
+
+            switch (userRole)
+            {
+                case "Ober":
+                    filteredBestellingen = bestellingen.Where(b => _unitOfWork.CategorieTypen.GetByCategorieIdAsync(b.Product.CategorieId).Result?.Naam == "Dranken").ToList(); // Dranken
+                    break;
+                case "Kok":
+                    filteredBestellingen = bestellingen.Where(b => _unitOfWork.CategorieTypen.GetByCategorieIdAsync(b.Product.CategorieId).Result?.Naam != "Dranken").ToList(); // Gerechten
+                    break;
+            }
+            filteredBestellingen = filteredBestellingen
+                .OrderBy(b => b.TijdstipBestelling)
+                .ToList();
+
+            var statussen = await _unitOfWork.Statussen.GetAllAsync();
+            var statusColors = new Dictionary<int, string>
+            {
+                { 1, "primary" },   // In behandeling
+                { 2, "success" },   // Klaar
+                { 3, "info" },      // Gereserveerd
+                { 4, "danger" },    // Geannuleerd
+                { 5, "warning" }       // Toegevoegd
+            };
+            ViewBag.StatusList = statussen;
+            ViewBag.StatusColors = statusColors;
+
+            return View(filteredBestellingen);
         }
 
+        [Authorize(Roles = "Eigenaar, Kok, Ober")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(int id, int StatusId)
+        {
+            var bestelling = await _unitOfWork.Bestellingen.GetByIdAsync(id);
+            if (bestelling == null)
+                return NotFound();
+
+            bestelling.StatusId = StatusId;
+            await _unitOfWork.CompleteAsync();
+
+            return Ok();
+        }
+
+        #endregion
+
+        #region Create (menu)
         [Authorize(Roles = "Klant, Eigenaar")]
         [HttpGet]
         public async Task<IActionResult> Create(int reservatieId)
@@ -103,7 +151,8 @@ namespace Restaurant.Controllers
                     StatusId = 5, // Status "Toegevoegd"
                 };
 
-                if (item.CategorieId == 1) drinkCount++; else foodCount++;
+                var categorieType = await _unitOfWork.CategorieTypen.GetByCategorieIdAsync(item.CategorieId);
+                if (categorieType?.Naam == "Dranken") drinkCount++; else foodCount++;
 
                 await _unitOfWork.Bestellingen.AddAsync(bestelling);
             }
@@ -167,5 +216,6 @@ namespace Restaurant.Controllers
                         }).ToList()
                 }).ToList();
         }
+        #endregion
     }
 }

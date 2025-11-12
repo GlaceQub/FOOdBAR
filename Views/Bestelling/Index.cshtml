@@ -1,28 +1,74 @@
 ﻿@model IEnumerable<Bestelling>
+@{
+    var statusList = ViewBag.StatusList as IEnumerable<Status>;
+    var statusColors = ViewBag.StatusColors as IDictionary<int, string>;
+}
 
 <h2>Bestellingen</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Reservatie</th>
-            <th>Datum</th>
-            <th>Product</th>
-            <th>Product type</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var bestelling in Model)
-    {
-        <tr>
-            <td>@bestelling.Id</td>
-            <td>@bestelling.ReservatieId</td>
-            <td>@bestelling.TijdstipBestelling</td>
-            <td>@bestelling.Product.Naam</td>
-            <td>@bestelling.Product.Categorie</td>
-            <td>@bestelling.Status.Naam</td>
-        </tr>
-    }
-    </tbody>
-</table>
+
+<div class="list-group-item rounded-3 shadow-sm mb-3 bg-secondary-subtle">
+    <div class="row fw-bold text-secondary py-2 px-3">
+        <div class="col-2 text-start">Reservatie</div>
+        <div class="col-3 text-start">Datum</div>
+        <div class="col-3 text-start">Product</div>
+        <div class="col-2 text-start">Opmerkingen</div>
+        <div class="col-2 text-start">Status</div>
+    </div>
+</div>
+
+@foreach (var bestelling in Model)
+{
+    var statusClass = statusColors != null && statusColors.ContainsKey(bestelling.Status.Id)
+        ? statusColors[bestelling.Status.Id]
+        : "light";
+    <div class="list-group-item rounded-3 shadow-sm mb-3 list-group-item-@statusClass">
+        <div class="row align-items-center py-2 px-3">
+            <div class="col-2 text-start">@bestelling.ReservatieId</div>
+            <div class="col-3 text-start">@bestelling.TijdstipBestelling?.ToString("HH:mm:ss dd-MM-yyyy")</div>
+            <div class="col-3 text-start">@bestelling.Product.Naam</div>
+            <div class="col-2 text-start">@bestelling.Opmerking</div>
+            <div class="col-2">
+                <form method="post" asp-action="UpdateStatus" asp-route-id="@bestelling.Id" class="status-form d-inline" id="status-form-@bestelling.Id">
+                    <select name="StatusId" class="form-select form-select-sm w-100 d-inline-block status-dropdown" data-bestelling-id="@bestelling.Id">
+                        @foreach (var status in statusList)
+                        {
+                            <option value="@status.Id" selected="@(bestelling.Status.Id == status.Id ? "selected" : null)">
+                                @status.Naam
+                            </option>
+                        }
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    var statusColors = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(statusColors));
+
+    $(document).ready(function () {
+        $('.status-dropdown').on('change', function () {
+            var form = $(this).closest('form');
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function () {
+                    var statusId = form.find('select[name="StatusId"]').val();
+                    var row = form.closest('.list-group-item');
+                    // Remove any previous status class
+                    row.removeClass(function (index, className) {
+                        return (className.match(/list-group-item-\S+/g) || []).join(' ');
+                    });
+                    // Add new status class
+                    var newClass = "list-group-item-" + (statusColors[statusId] || "light");
+                    row.addClass(newClass);
+                },
+                error: function () {
+                    alert('Status update failed.');
+                }
+            });
+        });
+    });
+</script>

@@ -10,6 +10,7 @@
         public IProductRepository Producten { get; }
         public ICategorieTypeRepository CategorieTypen { get; }
 
+        public IStatusRepository Statussen { get; }
         public UnitOfWork(RestaurantContext context)
         {
             _context = context;
@@ -19,6 +20,7 @@
             Categorieen = new CategorieRepository(_context);
             Producten = new ProductRepository(_context);
             CategorieTypen = new CategorieTypeRepository(_context);
+            Statussen = new StatusRepository(_context);
         }
 
         public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();

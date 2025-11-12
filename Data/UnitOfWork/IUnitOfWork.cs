@@ -19,5 +19,8 @@
 
         // Product related
         IProductRepository Producten { get; }
+
+        // Status related
+        IStatusRepository Statussen { get; }
     }
 }
