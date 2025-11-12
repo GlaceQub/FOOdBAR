@@ -101,8 +101,10 @@ namespace Restaurant.Controllers
             if (!string.IsNullOrEmpty(CartItemsJson))
             {
                 // Deserialize to a simple DTO (ProductId, Aantal)
-                var simpleCart = System.Text.Json.JsonSerializer.Deserialize<List<CartItemWithProductViewModel>>(CartItemsJson)
-                    ?? new List<CartItemWithProductViewModel>();
+                var simpleCart = System.Text.Json.JsonSerializer.Deserialize<List<CartItemWithProductViewModel>>(
+                    CartItemsJson,
+                    new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                ) ?? new List<CartItemWithProductViewModel>();
 
                 // Rebuild CartItemsWithProduct for display and processing
                 foreach (var item in simpleCart)
@@ -116,7 +118,8 @@ namespace Restaurant.Controllers
                             CategorieId = product.CategorieId,
                             Aantal = item.Aantal,
                             Naam = product.Naam,
-                            Prijs = product.PrijsProducten.OrderByDescending(pp => pp.DatumVanaf).FirstOrDefault()?.Prijs ?? 0
+                            Prijs = product.PrijsProducten.OrderByDescending(pp => pp.DatumVanaf).FirstOrDefault()?.Prijs ?? 0,
+                            Opmerking = item.Opmerking
                         });
                     }
                 }
