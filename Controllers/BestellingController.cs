@@ -114,11 +114,11 @@ namespace Restaurant.Controllers
                 // Notify relevant staff based on order contents
                 if (drinkCount > 0)
                 {
-                    await _hubContext.Clients.Group("Ober").SendAsync("NieuweBestelling", $"{drinkCount} Nieuwe Drankbestelling(en)");
+                    await _hubContext.Clients.Group("Ober").SendAsync("NieuweBestelling", $"{drinkCount} Nieuwe drankbestelling{(drinkCount > 1 ? "en" : "")}");
                 }
                 if (foodCount > 0)
                 {
-                    await _hubContext.Clients.Group("Kok").SendAsync("NieuweBestelling", $"{foodCount} Nieuwe Etenbestelling(en)");
+                    await _hubContext.Clients.Group("Kok").SendAsync("NieuweBestelling", $"{foodCount} Nieuwe gerechtbestelling{(foodCount > 1 ? "en" : "")}");
                 }
                 // TODO: Bevestigingsmail sturen en notificaties verwerken
 
