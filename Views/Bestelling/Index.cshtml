@@ -1,5 +1,28 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model IEnumerable<Bestelling>
+
+<h2>Bestellingen</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Reservatie</th>
+            <th>Datum</th>
+            <th>Product</th>
+            <th>Product type</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var bestelling in Model)
+    {
+        <tr>
+            <td>@bestelling.Id</td>
+            <td>@bestelling.ReservatieId</td>
+            <td>@bestelling.TijdstipBestelling</td>
+            <td>@bestelling.Product.Naam</td>
+            <td>@bestelling.Product.Categorie</td>
+            <td>@bestelling.Status.Naam</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -6,6 +6,8 @@
     <h1 class="display-4">Welcome op het Account Dashboard</h1>
     @if (User.Identity.IsAuthenticated)
     {
+        <p class="lead">You are logged in as @User.Identity.Name</p>
+        <p>Your role: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</p>
         <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
             <button type="submit" class="nav-link btn btn-outline-danger">Logout</button>
         </form>

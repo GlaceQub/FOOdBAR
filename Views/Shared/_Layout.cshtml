@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/Restaurant.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
-<body>
+<body data-user-role="@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -45,6 +45,10 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+
+            @* Notifications *@
+            <div id="notification-container" style="position: fixed; top: 80px; right: 30px; z-index: 1055; width: 350px;"></div>
+
             @RenderBody()
         </main>
     </div>
@@ -57,6 +61,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="~/js/notifications.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

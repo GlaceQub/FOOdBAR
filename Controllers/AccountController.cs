@@ -21,7 +21,7 @@ namespace Restaurant.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Authorize(Roles = "Klant, Eigenaar")]
+        [Authorize(Roles = "Klant, Eigenaar, Zaalverantwoordelijke, Kok, Ober")]
         [HttpGet("Dashboard")]
         public IActionResult Dashboard()
         {
