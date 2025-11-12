@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", function () {
 connection.start().then(function () {
     const userRole = document.body.getAttribute("data-user-role") || "Klant";
     connection.invoke("AddToGroup", userRole)
-        .then(() => console.log("Joined group:", userRole))
         .catch(err => console.error("AddToGroup error:", err));
 })
 

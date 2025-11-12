@@ -19,7 +19,7 @@ else
         <input type="hidden" id="CartItemsJson" name="CartItemsJson" value='@Html.Raw(ViewBag.CartItemsJson ?? "[]")' />
 
         <div class="row">
-            <!-- Menu (2/3) -->
+            <!-- Menu -->
             <div class="col-md-7">
                 <ul class="nav nav-tabs mb-3" id="menuTab" role="tablist">
                     @for (int i = 0; i < Model.MenuTypes.Count; i++)
@@ -66,18 +66,18 @@ else
                 </div>
             </div>
 
-            <!-- Cart (1/3) -->
+            <!-- Cart -->
             <div class="col-md-5">
                 <h4>Winkelmandje</h4>
                 <table class="table table-sm" style="table-layout: fixed; width: 100%;">
                     <thead>
                         <tr>
-                            <th>Naam</th>
-                            <th>Aantal</th>
-                            <th>Prijs</th>
-                            <th>Totaal</th>
-                            <th>Opmerking</th>
-                            <th></th>
+                            <th style="width: 35%;">Naam</th>
+                            <th style="width: 15%;">Aantal</th>
+                            <th style="width: 15%;">Prijs</th>
+                            <th style="width: 15%;">Totaal</th>
+                            <th style="width: 20%;">Opmerking</th>
+                            <th style="width: 5%;"></th>
                         </tr>
                     </thead>
                     <tbody id="cartTableBody">
@@ -90,7 +90,13 @@ else
                                     <td>@item.Aantal</td>
                                     <td>@String.Format("{0:C}", item.Prijs)</td>
                                     <td>@String.Format("{0:C}", item.Aantal * item.Prijs)</td>
-                                    <td>@item.Opmerking</td>
+                                    <td>
+                                        @(string.IsNullOrEmpty(item.Opmerking)
+                                            ? ""
+                                            : item.Opmerking.Length > 10
+                                                ? item.Opmerking.Substring(0, 8) + "..."
+                                                : item.Opmerking)
+                                    </td>
                                     <td>
                                         <button type="button"
                                                 onclick="removeFromCart(@item.ProductId, '@(item.Opmerking?.Replace("'", "\\'") ?? "")')" title="Verwijder"
@@ -119,7 +125,7 @@ else
 
 <!-- Modal for adding product to cart -->
 <div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addToCartModalLabel">Product toevoegen</h5>

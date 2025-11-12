@@ -40,13 +40,14 @@ function updateCartTable(cartItems, totaalBedrag) {
         cartItems.forEach(item => {
             // Escape single quotes in opmerking for JS string
             const normalizedOpmerking = (item.opmerking ?? '').replace(/'/g, "\\'");
+            const truncatedOpmerking = truncateOpmerking(item.opmerking);
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${item.naam}</td>
                 <td>${item.aantal}</td>
                 <td>${item.prijs.toLocaleString('nl-BE', { style: 'currency', currency: 'EUR' })}</td>
                 <td>${(item.aantal * item.prijs).toLocaleString('nl-BE', { style: 'currency', currency: 'EUR' })}</td>
-                <td>${item.opmerking ? item.opmerking : ''}</td>
+                <td>${truncatedOpmerking ? truncatedOpmerking : ''}</td>
                 <td>
                     <button type="button" onclick="removeFromCart(${parseInt(item.productId, 10)}, '${normalizedOpmerking}')" title="Verwijder"
                         style="background: none; border: none; padding: 0; cursor: pointer;">
@@ -118,4 +119,9 @@ function findProductById(productId) {
         }
     }
     return null;
+}
+
+function truncateOpmerking(opmerking) {
+    if (!opmerking) return "";
+    return opmerking.length > 10 ? opmerking.substring(0, 9) + "..." : opmerking;
 }
