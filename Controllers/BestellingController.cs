@@ -149,6 +149,7 @@ namespace Restaurant.Controllers
                     Aantal = item.Aantal,
                     TijdstipBestelling = DateTime.Now,
                     StatusId = 5, // Status "Toegevoegd"
+                    Opmerking = item.Opmerking
                 };
 
                 var categorieType = await _unitOfWork.CategorieTypen.GetByCategorieIdAsync(item.CategorieId);
@@ -185,7 +186,7 @@ namespace Restaurant.Controllers
             }
         }
 
-        [Authorize(Roles = "Eigenaar, zaalverantwoordelijke, ober, kok, klant")]
+        [Authorize(Roles = "Eigenaar, Klant")]
         public async Task<IActionResult> Bevestiging()
         {
             return View();

@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace Restaurant.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Authorize(Roles = "Klant, Eigenaar, zaalverantwoordelijke, ober, kok")]
+    [Authorize(Roles = "Klant, Eigenaar")]
     public class BestellingApiController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -17,29 +15,33 @@ namespace Restaurant.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartDto dto)
         {
-            var cartItems = string.IsNullOrEmpty(dto.CartItemsJson)
-                ? new List<CartItemDto>()
-                : System.Text.Json.JsonSerializer.Deserialize<List<CartItemDto>>(dto.CartItemsJson) ?? new List<CartItemDto>();
+            // Get cart from session or create new
+            var cartItems = HttpContext.Session.GetObject<List<CartItemDto>>("Cart") ?? new List<CartItemDto>();
 
-            // Strictly filter out invalid/default objects
-            cartItems = cartItems.Where(ci => ci != null && ci.ProductId > 0 && ci.Aantal > 0).ToList();
+            // Find if product with same opmerking exists
+            string normalizedOpmerking = (dto.Opmerking ?? "").Trim();
+            var existing = cartItems.FirstOrDefault(ci =>
+                ci.ProductId == dto.ProductId &&
+                ((ci.Opmerking ?? "").Trim() == normalizedOpmerking)
+            );
 
-            // Find if product already exists in cart
-            var existing = cartItems.FirstOrDefault(ci => ci.ProductId == dto.ProductId);
             if (existing != null)
             {
-                existing.Aantal++;
+                existing.Aantal += dto.Aantal > 0 ? dto.Aantal : 1;
             }
             else
             {
                 cartItems.Add(new CartItemDto
                 {
                     ProductId = dto.ProductId,
-                    Aantal = 1
+                    Aantal = dto.Aantal > 0 ? dto.Aantal : 1,
+                    Opmerking = normalizedOpmerking
                 });
             }
 
-            // Now build the response with product info
+            HttpContext.Session.SetObject("Cart", cartItems);
+
+            // Enrich and return cart as before...
             var cartItemsWithProduct = new List<CartItemWithProductViewModel>();
             foreach (var item in cartItems)
             {
@@ -52,7 +54,8 @@ namespace Restaurant.Controllers
                         ProductId = item.ProductId,
                         Aantal = item.Aantal,
                         Naam = product.Naam,
-                        Prijs = prijs.Value
+                        Prijs = prijs.Value,
+                        Opmerking = item.Opmerking
                     });
                 }
             }
@@ -69,44 +72,51 @@ namespace Restaurant.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart([FromBody] RemoveFromCartDto dto)
         {
-            var cartItems = string.IsNullOrEmpty(dto.CartItemsJson)
-                ? new List<CartItemDto>()
-                : System.Text.Json.JsonSerializer.Deserialize<List<CartItemDto>>(dto.CartItemsJson) ?? new List<CartItemDto>();
+            // Get cart from session or create new
+            var cartItems = HttpContext.Session.GetObject<List<CartItemDto>>("Cart") ?? new List<CartItemDto>();
 
-            // Remove the item with the given ProductId
-            cartItems = cartItems
-                .Where(ci => ci != null && ci.ProductId > 0 && ci.Aantal > 0 && ci.ProductId != dto.ProductId)
-                .ToList();
+            string normalizedOpmerking = (dto.Opmerking ?? "").Trim();
 
-            // Build the response with product info
+            var item = cartItems.FirstOrDefault(ci =>
+                ci != null &&
+                ci.ProductId == dto.ProductId &&
+                ((ci.Opmerking ?? "").Trim() == normalizedOpmerking) &&
+                ci.Aantal > 0);
+
+            if (item != null)
+            {
+                item.Aantal--;
+                if (item.Aantal <= 0)
+                    cartItems.Remove(item);
+            }
+
+            // Update session cart
+            HttpContext.Session.SetObject("Cart", cartItems);
+
+            // Enrich and return cart as before
             var cartItemsWithProduct = new List<CartItemWithProductViewModel>();
             decimal totaalBedrag = 0;
-            foreach (var item in cartItems)
+            foreach (var ci in cartItems)
             {
-                var product = await _unitOfWork.Producten.GetByIdWithPriceAsync(item.ProductId);
+                var product = await _unitOfWork.Producten.GetByIdWithPriceAsync(ci.ProductId);
                 var prijs = product?.PrijsProducten.OrderByDescending(pp => pp.DatumVanaf).FirstOrDefault()?.Prijs;
                 if (product != null && prijs.HasValue)
                 {
                     cartItemsWithProduct.Add(new CartItemWithProductViewModel
                     {
-                        ProductId = item.ProductId,
-                        Aantal = item.Aantal,
+                        ProductId = ci.ProductId,
+                        Aantal = ci.Aantal,
                         Naam = product.Naam,
-                        Prijs = prijs.Value
+                        Prijs = prijs.Value,
+                        Opmerking = ci.Opmerking
                     });
-                    totaalBedrag += prijs.Value * item.Aantal;
+                    totaalBedrag += prijs.Value * ci.Aantal;
                 }
             }
 
             return Ok(new
             {
-                cartItems = cartItemsWithProduct.Select(ci => new
-                {
-                    productId = ci.ProductId,
-                    aantal = ci.Aantal,
-                    naam = ci.Naam,
-                    prijs = ci.Prijs
-                }),
+                cartItems = cartItemsWithProduct,
                 totaalBedrag
             });
         }

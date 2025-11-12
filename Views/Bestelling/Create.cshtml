@@ -50,7 +50,7 @@ else
                                                         <br />
                                                         <small>Prijs: @String.Format("{0:C}", product.Prijs)</small>
                                                     </span>
-                                                    <button type="button" class="btn btn-success btn-sm" onclick="addToCart(@product.Id)">Toevoegen</button>
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="openAddToCartModal(@product.Id)">Toevoegen</button>
                                                 </li>
                                             }
                                         </ul>
@@ -72,11 +72,12 @@ else
                 <table class="table table-sm" style="table-layout: fixed; width: 100%;">
                     <thead>
                         <tr>
-                            <th style="width: 50%;">Product</th>
-                            <th style="width: 15%;">Aantal</th>
-                            <th style="width: 15%;">Prijs</th>
-                            <th style="width: 15%;">Totaal</th>
-                            <th style="width: 5%;"></th>
+                            <th>Naam</th>
+                            <th>Aantal</th>
+                            <th>Prijs</th>
+                            <th>Totaal</th>
+                            <th>Opmerking</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="cartTableBody">
@@ -89,10 +90,10 @@ else
                                     <td>@item.Aantal</td>
                                     <td>@String.Format("{0:C}", item.Prijs)</td>
                                     <td>@String.Format("{0:C}", item.Aantal * item.Prijs)</td>
+                                    <td>@item.Opmerking</td>
                                     <td>
                                         <button type="button"
-                                                onclick="removeFromCart(@item.ProductId)"
-                                                title="Verwijder"
+                                                onclick="removeFromCart(@item.ProductId, '@(item.Opmerking?.Replace("'", "\\'") ?? "")')" title="Verwijder"
                                                 style="background: none; border: none; padding: 0; cursor: pointer;">
                                             <i class="bi bi-trash text-danger"></i>
                                         </button>
@@ -103,7 +104,7 @@ else
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-muted">Uw winkelmandje is leeg.</td>
+                                <td colspan="6" class="text-muted">Uw winkelmandje is leeg.</td>
                             </tr>
                         }
                     </tbody>
@@ -116,127 +117,35 @@ else
     </form>
 }
 
+<!-- Modal for adding product to cart -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Product toevoegen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sluiten"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addToCartForm">
+                    <input type="hidden" id="modalProductId" name="ProductId" />
+                    <div class="mb-3">
+                        <label for="modalAantal" class="form-label">Aantal</label>
+                        <input type="number" class="form-control" id="modalAantal" name="Aantal" min="1" value="1" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalOpmerking" class="form-label">Opmerking (optioneel)</label>
+                        <textarea class="form-control" id="modalOpmerking" name="Opmerking" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                <button type="button" class="btn btn-success" id="modalAddBtn">Toevoegen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    <script>
-        function addToCart(ProductId) {
-            let cartItems = [];
-            const cartItemsJson = document.getElementById('CartItemsJson').value;
-            if (cartItemsJson) {
-                try {
-                    cartItems = JSON.parse(cartItemsJson);
-                    cartItems = cartItems.filter(ci => ci && typeof ci.ProductId === 'number' && typeof ci.Aantal === 'number');
-                } catch { cartItems = []; }
-            }
-
-            // Log before sending
-            console.log("Sending to server:", cartItems);
-
-            fetch('/api/BestellingApi/AddToCart', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                    // Remove 'RequestVerificationToken'
-                },
-                body: JSON.stringify({ ProductId, CartItemsJson: JSON.stringify(cartItems) })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { throw err; });
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Log the response
-                console.log("Received from server:", data);
-
-                const newCart = data.cartItems
-                    .filter(item => typeof item.productId === 'number' && typeof item.aantal === 'number')
-                    .map(item => ({
-                        ProductId: item.productId,
-                        Aantal: item.aantal
-                    }));
-                document.getElementById('CartItemsJson').value = JSON.stringify(newCart);
-
-                // Log what will be rendered
-                const validItems = data.cartItems.filter(item =>
-                    typeof item.naam === 'string' &&
-                    typeof item.aantal === 'number' &&
-                    typeof item.prijs === 'number'
-                );
-                console.log("Rendering in table:", validItems);
-
-                updateCartTable(validItems, data.totaalBedrag);
-            })
-            .catch(err => {
-                console.error("API error:", err);
-                alert("Er is een fout opgetreden bij het verwerken van uw winkelmandje.");
-            });
-        }
-
-        function removeFromCart(ProductId) {
-            let cartItems = [];
-            const cartItemsJson = document.getElementById('CartItemsJson').value;
-            if (cartItemsJson) {
-                try {
-                    cartItems = JSON.parse(cartItemsJson);
-                    cartItems = cartItems.filter(ci => ci && typeof ci.ProductId === 'number' && typeof ci.Aantal === 'number');
-                } catch { cartItems = []; }
-            }
-
-            fetch('/api/BestellingApi/RemoveFromCart', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                },
-                body: JSON.stringify({ ProductId, cartItemsJson: JSON.stringify(cartItems) })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const newCart = data.cartItems
-                    .filter(item => typeof item.productId === 'number' && typeof item.aantal === 'number')
-                    .map(item => ({
-                        ProductId: item.productId,
-                        Aantal: item.aantal
-                    }));
-                document.getElementById('CartItemsJson').value = JSON.stringify(newCart);
-
-                const validItems = data.cartItems.filter(item =>
-                    typeof item.naam === 'string' &&
-                    typeof item.aantal === 'number' &&
-                    typeof item.prijs === 'number'
-                );
-                updateCartTable(validItems, data.totaalBedrag);
-            });
-        }
-
-        function updateCartTable(cartItems, totaalBedrag) {
-            const tbody = document.getElementById('cartTableBody');
-            tbody.innerHTML = '';
-            if (!cartItems || cartItems.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-muted">Uw winkelmandje is leeg.</td></tr>';
-            } else {
-                cartItems.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.naam}</td>
-                        <td>${item.aantal}</td>
-                        <td>${item.prijs.toLocaleString('nl-BE', { style: 'currency', currency: 'EUR' })}</td>
-                        <td>${(item.aantal * item.prijs).toLocaleString('nl-BE', { style: 'currency', currency: 'EUR' })}</td>
-                        <td>
-                            <button type="button" onclick="removeFromCart(${item.productId})" title="Verwijder"
-                                style="background: none; border: none; padding: 0; cursor: pointer;">
-                                <i class="bi bi-trash text-danger"></i>
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }
-            document.getElementById('cartTotal').innerText = 'Totaalbedrag: ' +
-                (typeof totaalBedrag === 'number'
-                    ? totaalBedrag.toLocaleString('nl-BE', { style: 'currency', currency: 'EUR' })
-                    : '€ 0,00');
-        }
-    </script>
+    <script src="~/js/addBestelling.js" asp-append-version="true"></script>
 }

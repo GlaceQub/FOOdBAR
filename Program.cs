@@ -137,6 +137,13 @@ builder.Services.AddSwaggerGen(swagger => {
 // Notification system
 builder.Services.AddSignalR();
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 // Add swagger when in development mode
@@ -164,6 +171,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapHub<BestellingNotificationHub>("/bestellingNotificationHub");
+app.UseSession();
 
 // Seed initial user
 using (var scope = app.Services.CreateScope())
