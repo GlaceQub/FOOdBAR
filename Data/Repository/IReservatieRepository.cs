@@ -9,7 +9,6 @@
         void Delete(int id);
         IEnumerable<Reservatie> GetReservatiesZonderTafel();
         IEnumerable<Tafel> GetBeschikbareTafels(DateTime datum, int tijdslotId, int aantalPersonen);
-        void KoppelTafelAanReservatie(int reservatieId, int tafelId);
         Tafel? GetTafelById(int tafelId);
         void UpdateTafel(Tafel tafel);
     }

@@ -85,7 +85,6 @@ namespace Restaurant.Controllers
             };
 
             _unitOfWork.Reservaties.Add(reservatie);
-            _unitOfWork.Reservaties.KoppelTafelAanReservatie(reservatie.Id, vrijeTafel.Id);
             _unitOfWork.Save();
 
             return RedirectToAction("Confirmation", new { id = reservatie.Id });
@@ -201,7 +200,6 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ToewijsTafel(int reservatieId, int tafelId)
         {
-            _unitOfWork.Reservaties.KoppelTafelAanReservatie(reservatieId, tafelId);
 
             var tafel = _unitOfWork.Reservaties.GetTafelById(tafelId);
             if (tafel != null)

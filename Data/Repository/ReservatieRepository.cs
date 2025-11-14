@@ -85,14 +85,6 @@ namespace Restaurant.Data.Repository
                 .ToList();
         }
 
-        // Koppel een tafel aan een reservatie
-        public void KoppelTafelAanReservatie(int reservatieId, int tafelId)
-        {
-            var koppeling = new TafelLijst { ReservatieId = reservatieId, TafelId = tafelId };
-            _context.TafelLijsten.Add(koppeling);
-            _context.SaveChanges();
-        }
-
         // Haal een tafel op via id
         public Tafel? GetTafelById(int tafelId)
         {
