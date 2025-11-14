@@ -86,7 +86,6 @@ namespace Restaurant.Controllers
             };
 
             _unitOfWork.Reservaties.Add(reservatie);
-            _unitOfWork.Reservaties.KoppelTafelAanReservatie(reservatie.Id, vrijeTafel.Id);
             _unitOfWork.Save();
 
             return RedirectToAction("Confirmation", new { id = reservatie.Id });
@@ -105,9 +104,14 @@ namespace Restaurant.Controllers
 
         [Authorize(Roles = "Eigenaar,Zaalverantwoordelijke")]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(DateTime? datum)
         {
             var reservaties = _unitOfWork.Reservaties.GetAll();
+
+            DateTime filterDatum = datum ?? DateTime.Today;
+            reservaties = reservaties.Where(r => r.Datum.HasValue && r.Datum.Value.Date == filterDatum.Date);
+            ViewBag.GeselecteerdeDatum = filterDatum;
+
             return View(reservaties);
         }
 

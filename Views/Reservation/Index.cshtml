@@ -1,6 +1,18 @@
 ﻿@model IEnumerable<Restaurant.Models.Reservatie>
+@{
+    DateTime? geselecteerdeDatum = ViewBag.GeselecteerdeDatum as DateTime?;
+}
 
 <h1>Reservaties</h1>
+
+<form method="get" asp-action="Index" class="mb-3">
+    <label for="datum">Filter op datum:</label>
+    <input type="date" id="datum" name="datum"
+           value="@(geselecteerdeDatum?.ToString("yyyy-MM-dd") ?? "")"
+           class="form-control d-inline-block w-auto"
+           onchange="this.form.submit();" />
+</form>
+
 <table class="table tafel-table align-middle">
     <thead>
         <tr>
