@@ -24,29 +24,22 @@ namespace Restaurant.Controllers
 
             // Bepaal filter voor Ober of Kok
             var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-            var filteredBestellingen = bestellingen;
 
-            switch (userRole)
-            {
-                case "Ober":
-                    filteredBestellingen = bestellingen.Where(b => _unitOfWork.CategorieTypen.GetByCategorieIdAsync(b.Product.CategorieId).Result?.Naam == "Dranken").ToList(); // Dranken
-                    break;
-                case "Kok":
-                    filteredBestellingen = bestellingen.Where(b => _unitOfWork.CategorieTypen.GetByCategorieIdAsync(b.Product.CategorieId).Result?.Naam != "Dranken").ToList(); // Gerechten
-                    break;
-            }
-            filteredBestellingen = filteredBestellingen
-                .OrderBy(b => b.TijdstipBestelling)
+            // Filter bestellingen op basis van gebruikersrol
+            var filteredBestellingen = FilterBestellingenByUserRole(userRole, bestellingen);
+
+            var customOrder = new List<string> { "Toegevoegd", "In Behandeling", "Klaar", "Geannuleerd", "Geserveerd" };
+            var statussen = (await _unitOfWork.Statussen.GetAllAsync())
+                .OrderBy(s => customOrder.IndexOf(s.Naam)) // Aangepaste volgorde
                 .ToList();
 
-            var statussen = await _unitOfWork.Statussen.GetAllAsync();
             var statusColors = new Dictionary<int, string>
             {
                 { 1, "primary" },   // In behandeling
-                { 2, "success" },   // Klaar
-                { 3, "info" },      // Gereserveerd
+                { 2, "info" },      // Klaar
+                { 3, "success" },   // Geserveerd
                 { 4, "danger" },    // Geannuleerd
-                { 5, "warning" }       // Toegevoegd
+                { 5, "warning" }    // Toegevoegd
             };
             ViewBag.StatusList = statussen;
             ViewBag.StatusColors = statusColors;
@@ -56,14 +49,39 @@ namespace Restaurant.Controllers
 
         [Authorize(Roles = "Eigenaar, Kok, Ober")]
         [HttpPost]
-        public async Task<IActionResult> UpdateStatus(int id, int StatusId)
+        public async Task<IActionResult> UpdateStatus(int id, int statusId)
         {
             var bestelling = await _unitOfWork.Bestellingen.GetByIdAsync(id);
             if (bestelling == null)
                 return NotFound();
 
-            bestelling.StatusId = StatusId;
+            var prevStatusId = bestelling.StatusId;
+            var prevStatus = await _unitOfWork.Statussen.GetByIdAsync(prevStatusId);
+
+            bestelling.StatusId = statusId;
             await _unitOfWork.CompleteAsync();
+
+            var status = await _unitOfWork.Statussen.GetByIdAsync(statusId);
+            var productType = await _unitOfWork.CategorieTypen.GetByCategorieIdAsync(bestelling.Product.CategorieId);
+            var currentUser = User.Identity?.Name ?? "Onbekend";
+            if (status != null && status.Naam == "Klaar")
+            {
+                await _hubContext.Clients.Group("Ober").SendAsync("BestellingKlaar", $"Er staat een nieuwe bestelling klaar.");
+                await _hubContext.Clients.Group("Ober").SendAsync("ForceReloadBestellingen", currentUser);
+            }
+            else if (prevStatus != null && prevStatus.Naam == "Klaar")
+            {
+                await _hubContext.Clients.Group("Ober").SendAsync("ForceReloadBestellingen", currentUser);
+                await _hubContext.Clients.Group("Kok").SendAsync("ForceReloadBestellingen", currentUser);
+            }
+            else if (productType != null && productType.Naam == "Dranken")
+            {
+                await _hubContext.Clients.Group("Ober").SendAsync("ForceReloadBestellingen", currentUser);
+            }
+            else
+            {
+                await _hubContext.Clients.Group("Kok").SendAsync("ForceReloadBestellingen", currentUser);
+            }
 
             return Ok();
         }
@@ -164,15 +182,22 @@ namespace Restaurant.Controllers
             int result = await _unitOfWork.CompleteAsync();
             if (result > 0)
             {
+                var currentUser = User.Identity?.Name ?? "Onbekend";
                 // Notify relevant staff based on order contents
                 if (drinkCount > 0)
                 {
                     await _hubContext.Clients.Group("Ober").SendAsync("NieuweBestelling", $"{drinkCount} Nieuwe drankbestelling{(drinkCount > 1 ? "en" : "")}");
+                    await _hubContext.Clients.Group("Ober").SendAsync("ForceReloadBestellingen", currentUser);
                 }
                 if (foodCount > 0)
                 {
                     await _hubContext.Clients.Group("Kok").SendAsync("NieuweBestelling", $"{foodCount} Nieuwe gerechtbestelling{(foodCount > 1 ? "en" : "")}");
+                    await _hubContext.Clients.Group("Kok").SendAsync("ForceReloadBestellingen", currentUser);
                 }
+
+                // Clear cart and redirect to confirmation
+                ClearCart();
+
                 // TODO: Bevestigingsmail sturen en notificaties verwerken
 
                 return RedirectToAction("Bevestiging");
@@ -221,5 +246,61 @@ namespace Restaurant.Controllers
                 }).ToList();
         }
         #endregion
+
+        #region Helper methods
+        private IEnumerable<Bestelling> FilterBestellingenByUserRole(string userRole, IEnumerable<Bestelling> bestellingen)
+        {
+            var filteredBestellingen = bestellingen;
+            var categorieTypen = _unitOfWork.CategorieTypen;
+
+            switch (userRole)
+            {
+                case "Ober":
+                    // load all category types for the products in the bestellingen
+                    var categorieTypeLookup = bestellingen
+                        .Select(b => b.Product.CategorieId)
+                        .Distinct()
+                        .ToDictionary(
+                            id => id,
+                            id => _unitOfWork.CategorieTypen.GetByCategorieIdAsync(id).Result
+                        );
+
+                    filteredBestellingen = bestellingen
+                        .Where(b =>
+                        {
+                            var categorieType = categorieTypeLookup.ContainsKey(b.Product.CategorieId) ? categorieTypeLookup[b.Product.CategorieId] : null;
+                            var isDranken = categorieType?.Naam == "Dranken";
+                            var isKlaar = b.Status?.Naam == "Klaar";
+                            return isDranken || (!isDranken && isKlaar);
+                        })
+                        .OrderBy(b =>
+                        {
+                            var categorieType = categorieTypeLookup.ContainsKey(b.Product.CategorieId) ? categorieTypeLookup[b.Product.CategorieId] : null;
+                            return categorieType?.Naam == "Dranken" ? 1 : 0; // Non-dranken first
+                        })
+                        .ThenBy(b => b.TijdstipBestelling)
+                        .ToList();
+                    break;
+                case "Kok":
+                    filteredBestellingen = bestellingen
+                    .Where(b =>
+                    {
+                        var categorieType = categorieTypen.GetByCategorieIdAsync(b.Product.CategorieId).Result;
+                        return categorieType?.Naam != "Dranken";
+                    })
+                    .OrderBy(b => b.TijdstipBestelling)
+                    .ToList();
+                    break;
+            }
+
+            return filteredBestellingen;
+        }
+
+        private void ClearCart()
+        {
+            HttpContext.Session.Remove("Cart");
+        }
+        #endregion
     }
+
 }

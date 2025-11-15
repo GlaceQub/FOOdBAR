@@ -8,11 +8,11 @@
             Opmerking: (Opmerking ?? '').trim()
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('CartItemsJson').value = JSON.stringify(data.cartItems);
-        updateCartTable(data.cartItems, data.totaalBedrag);
-    });
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('CartItemsJson').value = JSON.stringify(data.cartItems);
+            updateCartTable(data.cartItems, data.totaalBedrag);
+        });
 }
 
 function removeFromCart(productId, opmerking) {
@@ -24,11 +24,11 @@ function removeFromCart(productId, opmerking) {
             Opmerking: (opmerking ?? '').trim()
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('CartItemsJson').value = JSON.stringify(data.cartItems);
-        updateCartTable(data.cartItems, data.totaalBedrag);
-    });
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('CartItemsJson').value = JSON.stringify(data.cartItems);
+            updateCartTable(data.cartItems, data.totaalBedrag);
+        });
 }
 
 function updateCartTable(cartItems, totaalBedrag) {
@@ -125,3 +125,22 @@ function truncateOpmerking(opmerking) {
     if (!opmerking) return "";
     return opmerking.length > 10 ? opmerking.substring(0, 9) + "..." : opmerking;
 }
+
+// Clear the cart when the create page loads (after bestelling confirmation)
+document.addEventListener('DOMContentLoaded', function () {
+    // Reset the hidden field
+    const cartInput = document.getElementById('CartItemsJson');
+    if (cartInput) {
+        cartInput.value = '[]';
+    }
+
+    // clear the cart table visually
+    const tbody = document.getElementById('cartTableBody');
+    if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-muted">Uw winkelmandje is leeg.</td></tr>';
+    }
+    const cartTotal = document.getElementById('cartTotal');
+    if (cartTotal) {
+        cartTotal.innerText = 'Totaalbedrag: € 0,00';
+    }
+});

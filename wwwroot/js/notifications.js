@@ -3,6 +3,15 @@ const connection = new signalR.HubConnectionBuilder()
     .withUrl("/bestellingNotificationHub")
     .build();
 
+connection.start().then(function () {
+    const userRole = document.body.getAttribute("data-user-role") || "Klant";
+    connection.invoke("AddToGroup", userRole)
+        .catch(err => console.error("AddToGroup error:", err));
+}).catch(function (err) {
+    console.error("SignalR connection error:", err);
+});
+
+
 // Helper to format "time ago"
 function timeAgo(date) {
     const seconds = Math.floor((new Date() - date) / 1000);
@@ -16,6 +25,7 @@ function timeAgo(date) {
 
 // Show Bootstrap toast (stackable)
 function showNotification(notificationType, title = "alert", message) {
+    window.lastNotification = { type: notificationType, title, message };
     const container = document.getElementById("notification-container");
     const toastId = "toast-" + Date.now();
     const now = new Date();
@@ -31,7 +41,7 @@ function showNotification(notificationType, title = "alert", message) {
             </div>
             <div class="toast-body d-flex justify-content-between align-items-center">
                 <span class="text-start flex-grow-1">${message}</span>
-                ${notificationType === "NieuweBestelling" ? `
+                ${notificationType === "NieuweBestelling" || notificationType === "BestellingKlaar" ? `
                     <a href="/Bestelling/Index" class="btn btn-sm btn-warning ms-3">Bestellingen</a>
                 ` : ""}
             </div>
@@ -55,7 +65,7 @@ function showNotification(notificationType, title = "alert", message) {
     }, 1000);
 }
 
-// Ensure notification container exists and is stackable
+// On page load, check for pending notification in localStorage
 document.addEventListener("DOMContentLoaded", function () {
     if (!document.getElementById("notification-container")) {
         const div = document.createElement("div");
@@ -68,15 +78,46 @@ document.addEventListener("DOMContentLoaded", function () {
         div.style.maxWidth = "100vw";
         document.body.appendChild(div);
     }
+
+    // Restore notification if present
+    const pending = localStorage.getItem("pendingNotification");
+    if (pending) {
+        try {
+            const { type, title, message } = JSON.parse(pending);
+            showNotification(type, title, message);
+        } catch (e) {
+            showNotification("info", "Melding", pending);
+        }
+        localStorage.removeItem("pendingNotification");
+        window.lastNotification = null; // Clear only after restoring from localStorage
+    }
 });
 
-connection.start().then(function () {
-    const userRole = document.body.getAttribute("data-user-role") || "Klant";
-    connection.invoke("AddToGroup", userRole)
-        .catch(err => console.error("AddToGroup error:", err));
-})
-
-// Receive notification from server for new orders
 connection.on("NieuweBestelling", function (message) {
-    showNotification("NieuweBestelling", "Bestelling", message);
+    showNotification("NieuweBestelling", "Nieuwe bestelling!", message);
 });
+
+connection.on("BestellingKlaar", function (message) {
+    showNotification("BestellingKlaar", "Bestelling klaar!", message);
+});
+
+connection.on("ForceReloadBestellingen", function (triggeringUserName) {
+    const currentUserName = document.body.getAttribute("data-user-name");
+    if (triggeringUserName !== currentUserName) {
+        if (window.lastNotification) {
+            localStorage.setItem("pendingNotification", JSON.stringify(window.lastNotification));
+        }
+        if (isOnBestellingIndex()) {
+            location.reload();
+        }
+    } else {
+        // Optionally, show a notification or do nothing
+        console.log("No reload needed for triggering user.");
+    }
+});
+
+function isOnBestellingIndex() {
+    const path = window.location.pathname.toLowerCase();
+    return path === "/bestelling/index" || path === "/bestelling";
+}
+

@@ -6,26 +6,58 @@
 
 <h2>Bestellingen</h2>
 
+@* Status Filters *@
+<div class="mb-3" id="status-filter-pills">
+    <span class="fw-bold me-2">Getoonde statussen:</span>
+    @foreach (var status in statusList)
+    {
+        var statusColor = statusColors != null && statusColors.ContainsKey(status.Id)
+        ? statusColors[status.Id]
+        : "light";
+        var ariaPressed = "true";
+        if (status.Naam == "Geserveerd")
+        {
+            statusColor = "outline-" + statusColor;
+            ariaPressed = "false";
+        }
+        <button type="button"
+                class="status-filter-pill btn btn-@statusColor me-2 rounded-pill"
+                data-status-id="@status.Id"
+                aria-pressed="@ariaPressed">
+            @status.Naam
+        </button>
+    }
+</div>
+
+@* Headers *@
 <div class="list-group-item rounded-3 shadow-sm mb-3 bg-secondary-subtle">
     <div class="row fw-bold text-secondary py-2 px-3">
-        <div class="col-2 text-start">Reservatie</div>
-        <div class="col-3 text-start">Datum</div>
-        <div class="col-3 text-start">Product</div>
+        <div class="col-1 text-start">Reservatie</div>
+        <div class="col-1 text-start">Tijdstip</div>
+        <div class="col-1 text-start">Type</div>
+        <div class="col-2 text-start">Product</div>
+        <div class="col-2 text-start">Allergenen</div>
         <div class="col-2 text-start">Opmerkingen</div>
         <div class="col-2 text-start">Status</div>
+        <div class="col-1"></div>
     </div>
 </div>
 
+@* Bestellingen *@
 @foreach (var bestelling in Model)
 {
-    var statusClass = statusColors != null && statusColors.ContainsKey(bestelling.Status.Id)
+    var statusColor = statusColors != null && statusColors.ContainsKey(bestelling.Status.Id)
         ? statusColors[bestelling.Status.Id]
         : "light";
-    <div class="list-group-item rounded-3 shadow-sm mb-3 list-group-item-@statusClass">
+    <div class="list-group-item rounded-3 shadow-sm mb-3 list-group-item-@statusColor bestelling-row" data-status-id="@bestelling.Status.Id">
         <div class="row align-items-center py-2 px-3">
-            <div class="col-2 text-start">@bestelling.ReservatieId</div>
-            <div class="col-3 text-start">@bestelling.TijdstipBestelling?.ToString("HH:mm:ss dd-MM-yyyy")</div>
-            <div class="col-3 text-start">@bestelling.Product.Naam</div>
+            <div class="col-1 text-start">@bestelling.ReservatieId</div>
+            <div class="col-1 text-start">@bestelling.TijdstipBestelling?.ToString("HH:mm")</div>
+            <div class="col-1 text-start">
+                @(bestelling.Product?.Categorie?.Type?.Naam == "Dranken" ? "Drank" : "Gerecht")
+            </div>
+            <div class="col-2 text-start">@bestelling.Product.Naam</div>
+            <div class="col-2 text-start">@bestelling.Product.AllergenenInfo</div>
             <div class="col-2 text-start">@bestelling.Opmerking</div>
             <div class="col-2">
                 <form method="post" asp-action="UpdateStatus" asp-route-id="@bestelling.Id" class="status-form d-inline" id="status-form-@bestelling.Id">
@@ -39,36 +71,19 @@
                     </select>
                 </form>
             </div>
+            <div class="col-1">
+                <a asp-controller="Bestelling" asp-action="Edit" asp-route-id="@bestelling.Id"
+                   class="btn btn-link p-0 ms-2" title="Bewerken">
+                    <i class="bi bi-pencil-fill text-black"></i>
+                </a>
+            </div>
         </div>
     </div>
 }
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@* scripts *@
 <script>
     var statusColors = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(statusColors));
-
-    $(document).ready(function () {
-        $('.status-dropdown').on('change', function () {
-            var form = $(this).closest('form');
-            $.ajax({
-                type: form.attr('method'),
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function () {
-                    var statusId = form.find('select[name="StatusId"]').val();
-                    var row = form.closest('.list-group-item');
-                    // Remove any previous status class
-                    row.removeClass(function (index, className) {
-                        return (className.match(/list-group-item-\S+/g) || []).join(' ');
-                    });
-                    // Add new status class
-                    var newClass = "list-group-item-" + (statusColors[statusId] || "light");
-                    row.addClass(newClass);
-                },
-                error: function () {
-                    alert('Status update failed.');
-                }
-            });
-        });
-    });
 </script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/BestellingIndex.js" asp-append-version="true"></script>

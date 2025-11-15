@@ -8,6 +8,13 @@
 
     public async Task<IEnumerable<Status>> GetAllAsync()
     {
-        return await _context.Statussen.ToListAsync();
+        return await _context.Statussen
+            .OrderBy(s => s.Id)
+            .ToListAsync();
+    }
+
+    public async Task<Status?> GetByIdAsync(int id)
+    {
+        return await _context.Statussen.FindAsync(id);
     }
 }
