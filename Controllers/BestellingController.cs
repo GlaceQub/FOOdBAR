@@ -47,6 +47,7 @@ namespace Restaurant.Controllers
         }
 
         [Authorize(Roles = "Eigenaar, Kok, Ober")]
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(int id, int statusId)
         {
@@ -270,7 +271,8 @@ namespace Restaurant.Controllers
                             var categorieType = categorieTypeLookup.ContainsKey(b.Product.CategorieId) ? categorieTypeLookup[b.Product.CategorieId] : null;
                             var isDranken = categorieType?.Naam == "Dranken";
                             var isKlaar = b.Status?.Naam == "Klaar";
-                            return isDranken || (!isDranken && isKlaar);
+                            var isGeserveerd = b.Status?.Naam == "Geserveerd";
+                            return isDranken || (!isDranken && (isKlaar || isGeserveerd));
                         })
                         .OrderBy(b =>
                         {

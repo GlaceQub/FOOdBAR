@@ -68,6 +68,7 @@
             <div class="col-2 text-start">@bestelling.Opmerking</div>
             <div class="col-2">
                 <form method="post" asp-action="UpdateStatus" asp-route-id="@bestelling.Id" class="status-form d-inline" id="status-form-@bestelling.Id">
+                    @Html.AntiForgeryToken()
                     <select name="StatusId" class="form-select form-select-sm w-100 d-inline-block status-dropdown" data-bestelling-id="@bestelling.Id">
                         @foreach (var status in statusList)
                         {
