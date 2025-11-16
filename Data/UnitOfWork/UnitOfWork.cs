@@ -11,6 +11,9 @@
         public ICategorieTypeRepository CategorieTypen { get; }
 
         public IStatusRepository Statussen { get; }
+
+        public IReservatieRepository Reservaties { get; }
+
         public UnitOfWork(RestaurantContext context)
         {
             _context = context;
@@ -21,6 +24,7 @@
             Producten = new ProductRepository(_context);
             CategorieTypen = new CategorieTypeRepository(_context);
             Statussen = new StatusRepository(_context);
+            Reservaties = new ReservatieRepository(_context);
         }
 
         public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();

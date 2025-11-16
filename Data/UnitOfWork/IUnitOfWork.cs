@@ -22,5 +22,8 @@
 
         // Status related
         IStatusRepository Statussen { get; }
+
+        // Reservatie related
+        IReservatieRepository Reservaties { get; }
     }
 }

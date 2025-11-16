@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Betaling Mislukt";
+    var reservatieId = ViewBag.ReservatieId;
+    var betaalMethode = ViewBag.BetaalMethode;
+}
+
+<div class="container d-flex justify-content-center" style="margin-top: 60px;">
+    <div class="col-md-8">
+        <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-x-circle-fill fs-2 me-3"></i>
+            <div>
+                <h4 class="alert-heading mb-1">Betaling mislukt!</h4>
+                <p class="mb-0">
+                    Helaas is de betaling voor reservatie <strong>#@reservatieId</strong> niet gelukt.<br />
+                    @if (!string.IsNullOrEmpty(betaalMethode))
+                    {
+                        <span>Betaalmethode: <strong>@betaalMethode</strong></span>
+                        <br />
+                    }
+                    Probeer het opnieuw of probeer te betalen met cash.
+                </p>
+            </div>
+        </div>
+        <div class="text-center">
+            <a href="/Rekening/Afrekenen/@reservatieId" class="btn btn-danger">
+                Opnieuw proberen
+            </a>
+        </div>
+    </div>
+</div>

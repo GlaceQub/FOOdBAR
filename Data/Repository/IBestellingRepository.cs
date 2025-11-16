@@ -1,4 +1,6 @@
-﻿namespace Restaurant.Data.Repository
+﻿using Restaurant.ViewModels.Rekening;
+
+namespace Restaurant.Data.Repository
 {
     public interface IBestellingRepository
     {
@@ -10,5 +12,9 @@
 
         Task<IEnumerable<Bestelling>> GetByKlantIdAsync(string klantId);
         Task<IEnumerable<Bestelling>> GetByReservatieIdAsync(int reservatieId);
+
+        Task<IEnumerable<BestellingInfoRekeningViewModel>> GetBestellingInfoRekeningByReservatieIdAsync(int reservatieId);
+
+        Task<decimal> GetTotaalBedragByReservatieIdAsync(int reservatieId);
     }
 }
