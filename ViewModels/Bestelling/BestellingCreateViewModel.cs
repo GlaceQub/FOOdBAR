@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-public class BestellingCreateViewModel
+﻿public class BestellingCreateViewModel
 {
     public bool HasAssignedTable { get; set; }
 

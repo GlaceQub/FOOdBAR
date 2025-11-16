@@ -3,8 +3,11 @@
     var bestellingen = Model.Bestellingen;
     var statusList = Model.StatusList;
     var statusColors = Model.StatusColors;
-    ViewData["Title"] = "Bestellingen Overzicht";
+    ViewData["Title"] = "Bestellingen";
 }
+
+@* Page Title *@
+<h1 class="mb-4">@ViewData["Title"]</h1>
 
 @* Status Filters *@
 <div class="mb-3" id="status-filter-pills">
