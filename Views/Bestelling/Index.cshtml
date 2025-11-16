@@ -1,10 +1,10 @@
-﻿@model IEnumerable<Bestelling>
+﻿@model BestellingOverzichtViewModel
 @{
-    var statusList = ViewBag.StatusList as IEnumerable<Status>;
-    var statusColors = ViewBag.StatusColors as IDictionary<int, string>;
+    var bestellingen = Model.Bestellingen;
+    var statusList = Model.StatusList;
+    var statusColors = Model.StatusColors;
+    ViewData["Title"] = "Bestellingen Overzicht";
 }
-
-<h2>Bestellingen</h2>
 
 @* Status Filters *@
 <div class="mb-3" id="status-filter-pills">
@@ -44,7 +44,7 @@
 </div>
 
 @* Bestellingen *@
-@foreach (var bestelling in Model)
+@foreach (var bestelling in bestellingen)
 {
     var statusColor = statusColors != null && statusColors.ContainsKey(bestelling.Status.Id)
         ? statusColors[bestelling.Status.Id]
@@ -54,7 +54,14 @@
             <div class="col-1 text-start">@bestelling.ReservatieId</div>
             <div class="col-1 text-start">@bestelling.TijdstipBestelling?.ToString("HH:mm dd/M")</div>
             <div class="col-1 text-start">
-                @(bestelling.Product?.Categorie?.Type?.Naam == "Dranken" ? "Drank" : "Gerecht")
+                @if (bestelling.Product?.Categorie?.Type?.Naam == "Dranken")
+                {
+                    <i class="bi bi-cup-straw fs-3" title="Drank" aria-label="Drank"></i>
+                }
+                else
+                {
+                    <i class="bi bi-egg-fill fs-3" title="Gerecht" aria-label="Gerecht"></i>
+                }
             </div>
             <div class="col-2 text-start">@bestelling.Product.Naam</div>
             <div class="col-2 text-start">@bestelling.Product.AllergenenInfo</div>
@@ -72,7 +79,7 @@
                 </form>
             </div>
             <div class="col-1">
-                <a asp-controller="Bestelling" asp-action="Edit" asp-route-id="@bestelling.Id"
+                <a asp-controller="Bestelling" asp-action="Bewerken" asp-route-id="@bestelling.Id"
                    class="btn btn-link p-0 ms-2" title="Bewerken">
                     <i class="bi bi-pencil-fill text-black"></i>
                 </a>

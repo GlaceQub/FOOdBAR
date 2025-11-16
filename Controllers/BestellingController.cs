@@ -21,18 +21,12 @@ namespace Restaurant.Controllers
         public async Task<IActionResult> Index()
         {
             var bestellingen = await _unitOfWork.Bestellingen.GetAllAsync();
-
-            // Bepaal filter voor Ober of Kok
-            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-
-            // Filter bestellingen op basis van gebruikersrol
-            var filteredBestellingen = FilterBestellingenByUserRole(userRole, bestellingen);
-
             var customOrder = new List<string> { "Toegevoegd", "In Behandeling", "Klaar", "Geannuleerd", "Geserveerd" };
+            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            var filteredBestellingen = FilterBestellingenByUserRole(userRole, bestellingen);
             var statussen = (await _unitOfWork.Statussen.GetAllAsync())
                 .OrderBy(s => customOrder.IndexOf(s.Naam)) // Aangepaste volgorde
                 .ToList();
-
             var statusColors = new Dictionary<int, string>
             {
                 { 1, "primary" },   // In behandeling
@@ -41,10 +35,15 @@ namespace Restaurant.Controllers
                 { 4, "danger" },    // Geannuleerd
                 { 5, "warning" }    // Toegevoegd
             };
-            ViewBag.StatusList = statussen;
-            ViewBag.StatusColors = statusColors;
+            
+            var model = new BestellingOverzichtViewModel
+            {
+                Bestellingen = filteredBestellingen,
+                StatusList = statussen,
+                StatusColors = statusColors
+            };
 
-            return View(filteredBestellingen);
+            return View(model);
         }
 
         [Authorize(Roles = "Eigenaar, Kok, Ober")]
