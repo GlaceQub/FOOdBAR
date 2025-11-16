@@ -7,8 +7,15 @@
 
 @if (!Model.HasAssignedTable)
 {
-    <div class="alert alert-warning">
-        U heeft nog geen tafel toegewezen. <strong>Check eerst in bij de zaalverantwoordelijke.</strong>
+    <div class="alert alert-warning d-flex align-items-center mb-4 border border-warning-subtle" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-2 me-3 text-warning"></i>
+        <div>
+            <h4 class="alert-heading mb-1 text-warning">Geen tafel toegewezen</h4>
+            <p class="mb-0">
+                U heeft nog geen tafel toegewezen.<br />
+                <span class="fw-bold">Check eerst in bij de zaalverantwoordelijke voordat u een bestelling plaatst.</span>
+            </p>
+        </div>
     </div>
 }
 else

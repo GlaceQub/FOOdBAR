@@ -32,7 +32,7 @@ function showNotification(notificationType, title = "alert", message) {
 
     // Toast HTML
     const toastHtml = `
-        <div id="${toastId}" class="toast align-items-center text-bg-warning border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+        <div id="${toastId}" class="toast align-items-center text-bg-warning border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" data-notification-type="${notificationType}">
             <div class="toast-header">
                 <i class="bi bi-bell-fill me-2" style="font-size: 1.25rem; color: #ffc107;"></i>
                 <strong class="me-auto">${title}</strong>
@@ -42,7 +42,7 @@ function showNotification(notificationType, title = "alert", message) {
             <div class="toast-body d-flex justify-content-between align-items-center">
                 <span class="text-start flex-grow-1">${message}</span>
                 ${notificationType === "NieuweBestelling" || notificationType === "BestellingKlaar" ? `
-                    <a href="/Bestelling/Index" class="btn btn-sm btn-warning ms-3">Bestellingen</a>
+                    <button type="button" class="btn btn-sm btn-warning ms-3 bestellingen-btn" data-notification-type="${notificationType}">Bestellingen</button>
                 ` : ""}
             </div>
         </div>
@@ -63,6 +63,18 @@ function showNotification(notificationType, title = "alert", message) {
             clearInterval(interval);
         }
     }, 1000);
+
+    // Add event listener for Bestellingen button
+    if (notificationType === "NieuweBestelling" || notificationType === "BestellingKlaar") {
+        toastElem.querySelector('.bestellingen-btn').addEventListener('click', function () {
+            // Close all toasts of the same type
+            document.querySelectorAll(`.toast[data-notification-type="${notificationType}"]`).forEach(function (elem) {
+                bootstrap.Toast.getOrCreateInstance(elem).hide();
+            });
+            // Navigate to Bestellingen
+            window.location.href = "/Bestelling/Index";
+        });
+    }
 }
 
 // On page load, check for pending notification in localStorage

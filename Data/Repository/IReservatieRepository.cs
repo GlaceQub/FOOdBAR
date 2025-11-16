@@ -7,5 +7,7 @@ namespace Restaurant.Data.Repository
         Task<RekeningInfoReservatieViewModel> GetReservatieWithKlantByIdAsync(int reservatieId);
 
         Task<bool> BehandelBetaling(int reservatieId);
+
+        Task<Reservatie> GetReservatieByIdAsync(int reservatieId);
     }
 }

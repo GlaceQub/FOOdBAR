@@ -36,12 +36,20 @@ namespace Restaurant.Data.Repository
         public async Task<bool> BehandelBetaling(int reservatieId)
         {
             var reservatie = await _context.Reservaties.FindAsync(reservatieId);
-            if (reservatie == null)
+            if (reservatie == null || reservatie.Bestaald)
+            {
                 return false;
+            }
+
             reservatie.Bestaald = true;
             _context.Reservaties.Update(reservatie);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<Reservatie?> GetReservatieByIdAsync(int reservatieId)
+        {
+            return await _context.Reservaties.FindAsync(reservatieId);
         }
     }
 }

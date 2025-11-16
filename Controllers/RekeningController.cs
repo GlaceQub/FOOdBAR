@@ -48,9 +48,17 @@ namespace Restaurant.Controllers
         public async Task<IActionResult> Afrekenen(AfrekenenViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
-
             var reservatieId = model.ReservatieId;
             var betaalMethode = model.BetaalMethode;
+
+            // Check if reservatie is already betaald BEFORE processing payment
+            var reservatie = await _unitOfWork.Reservaties.GetReservatieByIdAsync(reservatieId);
+            if (reservatie == null || reservatie.Bestaald)
+            {
+                // Already paid or not found, redirect to Mislukt
+                return RedirectToAction("Mislukt", new { reservatieId, betaalMethode, errorType = "reedsBetaald" });
+            }
+
             if (await BehandelBetaling(reservatieId, betaalMethode))
             {
                 return RedirectToAction("Bevestiging", new { reservatieId });
@@ -81,10 +89,11 @@ namespace Restaurant.Controllers
 
         [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpGet("Rekening/Afrekenen/Mislukt/{reservatieId}")]
-        public IActionResult Mislukt(int reservatieId, string betaalMethode)
+        public IActionResult Mislukt(int reservatieId, string betaalMethode, string errorType = "default")
         {
             ViewBag.ReservatieId = reservatieId;
             ViewBag.BetaalMethode = betaalMethode;
+            ViewBag.ErrorType = errorType;
             return View();
         }
         #endregion
