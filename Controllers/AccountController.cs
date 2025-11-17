@@ -21,6 +21,7 @@ namespace Restaurant.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize(Roles = "Klant, Eigenaar, Zaalverantwoordelijke, Kok, Ober")]
         [HttpGet("Dashboard")]
         public IActionResult Dashboard()
         {
@@ -133,6 +134,9 @@ namespace Restaurant.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                // Assign "Klant" role to new user
+                await _userManager.AddToRoleAsync(user, "Klant");
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Dashboard", "Account");
             }

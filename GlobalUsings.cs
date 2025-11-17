@@ -11,7 +11,6 @@ global using Microsoft.AspNetCore.Mvc.Rendering;
 global using Restaurant.Data;
 global using Restaurant.Data.Repository;
 global using Restaurant.Data.UnitOfWork;
-global using Restaurant.Dto;
 global using Restaurant.Models;
 global using Restaurant.Services;
 global using Restaurant.ViewModels;

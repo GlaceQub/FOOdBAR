@@ -6,6 +6,8 @@
     <h1 class="display-4">Welcome op het Account Dashboard</h1>
     @if (User.Identity.IsAuthenticated)
     {
+        <p class="lead">You are logged in as @User.Identity.Name</p>
+        <p>Your role: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</p>
 
         @if (User.IsInRole("Eigenaar") || User.IsInRole("Zaalverantwoordelijke"))
         {

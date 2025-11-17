@@ -1,0 +1,164 @@
+﻿@model BestellingCreateViewModel
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<h2>Menu</h2>
+
+@if (!Model.HasAssignedTable)
+{
+    <div class="alert alert-warning d-flex align-items-center mb-4 border border-warning-subtle" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-2 me-3 text-warning"></i>
+        <div>
+            <h4 class="alert-heading mb-1 text-warning">Geen tafel toegewezen</h4>
+            <p class="mb-0">
+                U heeft nog geen tafel toegewezen.<br />
+                <span class="fw-bold">Check eerst in bij de zaalverantwoordelijke voordat u een bestelling plaatst.</span>
+            </p>
+        </div>
+    </div>
+}
+else
+{
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ReservatieId" />
+        <input type="hidden" id="CartItemsJson" name="CartItemsJson" value='@Html.Raw(ViewBag.CartItemsJson ?? "[]")' />
+
+        <div class="row">
+            <!-- Menu -->
+            <div class="col-md-7">
+                <ul class="nav nav-tabs mb-3" id="menuTab" role="tablist">
+                    @for (int i = 0; i < Model.MenuTypes.Count; i++)
+                    {
+                        var type = Model.MenuTypes[i];
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link @(i == 0 ? "active" : "")" id="type-tab-@i" data-bs-toggle="tab" data-bs-target="#type-@i" type="button" role="tab" aria-controls="type-@i" aria-selected="@(i == 0 ? "true" : "false")">@type.Naam</button>
+                        </li>
+                    }
+                </ul>
+                <div class="tab-content" id="menuTabContent">
+                    @for (int i = 0; i < Model.MenuTypes.Count; i++)
+                    {
+                        var type = Model.MenuTypes[i];
+                        <div class="tab-pane fade @(i == 0 ? "show active" : "")" id="type-@i" role="tabpanel" aria-labelledby="type-tab-@i">
+                            @foreach (var categorie in type.Categorieen)
+                            {
+                                <div class="mb-3">
+                                    <h5>@categorie.Naam</h5>
+                                    @if (categorie.Producten != null && categorie.Producten.Any())
+                                    {
+                                        <ul class="list-group">
+                                            @foreach (var product in categorie.Producten)
+                                            {
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <span>
+                                                        <strong>@product.Naam</strong> - @product.Beschrijving
+                                                        <br />
+                                                        <small>Prijs: @String.Format("{0:C}", product.Prijs)</small>
+                                                    </span>
+                                                    <button type="button" class="btn btn-success btn-sm" onclick="openAddToCartModal(@product.Id)">Toevoegen</button>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-muted ps-2">Geen producten beschikbaar in deze categorie.</div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Cart -->
+            <div class="col-md-5">
+                <h4>Winkelmandje</h4>
+                <table class="table table-sm" style="table-layout: fixed; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;">Naam</th>
+                            <th style="width: 15%;">Aantal</th>
+                            <th style="width: 15%;">Prijs</th>
+                            <th style="width: 15%;">Totaal</th>
+                            <th style="width: 20%;">Opmerking</th>
+                            <th style="width: 5%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartTableBody">
+                        @if (Model.CartItemsWithProduct.Any())
+                        {
+                            @foreach (var item in Model.CartItemsWithProduct)
+                            {
+                                <tr>
+                                    <td>@item.Naam</td>
+                                    <td>@item.Aantal</td>
+                                    <td>@String.Format("{0:C}", item.Prijs)</td>
+                                    <td>@String.Format("{0:C}", item.Aantal * item.Prijs)</td>
+                                    <td>
+                                        @(string.IsNullOrEmpty(item.Opmerking)
+                                            ? ""
+                                            : item.Opmerking.Length > 10
+                                                ? item.Opmerking.Substring(0, 8) + "..."
+                                                : item.Opmerking)
+                                    </td>
+                                    <td>
+                                        <button type="button"
+                                                onclick="removeFromCart(@item.ProductId, '@(item.Opmerking?.Replace("'", "\\'") ?? "")')" title="Verwijder"
+                                                style="background: none; border: none; padding: 0; cursor: pointer;">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-muted">Uw winkelmandje is leeg.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="fw-bold" id="cartTotal">Totaalbedrag: @Model.TotaalBedrag.ToString("C")</div>
+
+                <button type="submit" class="btn btn-primary mt-3">Bestelling bevestigen</button>
+            </div>
+        </div>
+    </form>
+}
+
+<!-- Modal for adding product to cart -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Product toevoegen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sluiten"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addToCartForm">
+                    <input type="hidden" id="modalProductId" name="ProductId" />
+                    <div class="mb-3">
+                        <label for="modalAantal" class="form-label">Aantal</label>
+                        <input type="number" class="form-control" id="modalAantal" name="Aantal" min="1" value="1" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="modalOpmerking" class="form-label">Opmerking (optioneel)</label>
+                        <textarea class="form-control" id="modalOpmerking" name="Opmerking" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                <button type="button" class="btn btn-success" id="modalAddBtn">Toevoegen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/addBestelling.js" asp-append-version="true"></script>
+}

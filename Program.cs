@@ -138,6 +138,16 @@ builder.Services.AddSwaggerGen(swagger => {
     });
 });
 
+// Notification system
+builder.Services.AddSignalR();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 // Add swagger when in development mode
@@ -171,16 +181,16 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<BestellingNotificationHub>("/bestellingNotificationHub");
+app.UseSession();
 
 // Seed initial user
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<IdentitySeeding>();
     UserManager<CustomUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<CustomUser>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-
-    await seeder.IdentitySeedingAsync(userManager);
+    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await seeder.IdentitySeedingAsync(userManager, roleManager);
 }
 
 app.Run();
