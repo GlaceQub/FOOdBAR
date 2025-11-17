@@ -56,10 +56,11 @@ namespace Restaurant.Data.Repository
         public IEnumerable<Reservatie> GetAll()
         {
             return _context.Reservaties
+                .Include(r => r.CustomUser)
                 .Include(r => r.Tafellijsten)
-                    .ThenInclude(tl => tl.Tafel)
+                .ThenInclude(tl => tl.Tafel)
                 .Include(r => r.Tijdslot)
-                .ToList();
+                .ToList() ?? new List<Reservatie>();
         }
 
         // Haal een reservatie op via id
@@ -89,10 +90,18 @@ namespace Restaurant.Data.Repository
         // Verwijder een reservatie
         public void Delete(int id)
         {
-            var reservatie = _context.Reservaties.Find(id);
+            var reservatie = _context.Reservaties
+                    .Include(r => r.Tafellijsten)
+                    .FirstOrDefault(r => r.Id == id);
+
             if (reservatie != null)
             {
+                // Verwijder alle gekoppelde TafelLijst-entries
+                _context.TafelLijsten.RemoveRange(reservatie.Tafellijsten);
+
+                // Verwijder de reservatie zelf
                 _context.Reservaties.Remove(reservatie);
+
                 _context.SaveChanges();
             }
         }

@@ -13,6 +13,7 @@ namespace Restaurant.Models
         public string? Postcode { get; set; }
         public string? Gemeente { get; set; }
         public bool Actief { get; set; }
+        public string VolledigeNaam => $"{Voornaam} {Achternaam}";
 
         [ForeignKey("Land")]
         public int LandId { get; set; }
