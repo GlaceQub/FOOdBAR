@@ -21,6 +21,7 @@ builder.Configuration.GetRequiredSection(nameof(Settings)).Bind(Token.Settings);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ReservatieRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -32,6 +33,9 @@ switch (machineName)
 {
     case "DESKTOP-DAVID":
         connectionString = builder.Configuration.GetConnectionString("DavidHomeDBConnection");
+        break;
+    case "DESKTOP-K5018T2":
+        connectionString = builder.Configuration.GetConnectionString("LanderLaptopDBConnection");
         break;
     case "LAPTOP_DAVID":
         connectionString = builder.Configuration.GetConnectionString("DavidLaptopDBConnection");
@@ -165,6 +169,13 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseStatusCodePages(async context =>
+{
+    if (context.HttpContext.Response.StatusCode == 404)
+    {
+        context.HttpContext.Response.Redirect("/UnderConstruction");
+    }
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(

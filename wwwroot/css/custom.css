@@ -1,0 +1,461 @@
+﻿/* =========================
+   KLEURENPALET (ALGEMEEN)
+   ========================= */
+:root {
+    --color-white: #FFFFFF;
+    --color-offwhite: #FFF9EB;
+    --color-orange: #FA9500;
+    --color-darkred: #A33100;
+    --color-darkgray: #2F3137;
+}
+
+/* =========================
+   BASIS LAYOUT EN TYPOGRAFIE (ALGEMEEN)
+   ========================= */
+html, body {
+    font-family: 'Antonio', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* =========================
+   NAVBAR (ALLE PAGINA'S)
+   ========================= */
+.custom-navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: var(--color-darkred);
+    padding: 1rem 0 1rem 0;
+    box-shadow: 0 2px 8px rgba(47,49,55,0.08);
+    border: none;
+    position: relative; /* nodig voor absolute positioning van .navbar-login */
+}
+
+.logo-navbar {
+    height: 50px;
+    margin-bottom: 0;
+}
+
+/* Navigatielinks horizontaal gecentreerd onder het logo */
+.custom-navbar .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Standaard nav-link styling */
+.custom-navbar .nav-link {
+    color: var(--color-offwhite) !important;
+    font-size: 1.25rem;
+    text-align: center;
+    transition: color 0.2s, border-bottom 0.2s;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    font-family: 'Antonio', Arial, sans-serif;
+}
+
+    .custom-navbar .nav-link:hover,
+    .custom-navbar .nav-link.active {
+        color: var(--color-orange) !important;
+        background: rgba(255,249,235,0.08);
+        border-bottom: 2px solid var(--color-orange);
+    }
+
+/* "Aanmelden/Account/Logout" knop rechtsboven in de navbar */
+.navbar-login {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    color: var(--color-offwhite) !important;
+    font-size: 1.25rem;
+    font-family: 'Anton', Arial, sans-serif;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    transition: color 0.2s, border-bottom 0.2s, background 0.2s;
+    z-index: 10;
+    background: none;
+    text-decoration: none;
+    border: none;
+    font-weight: 600;
+}
+
+    .navbar-login:hover,
+    .navbar-login.active {
+        color: var(--color-orange) !important;
+        background: rgba(255,249,235,0.08);
+        border-bottom: 2px solid var(--color-orange);
+    }
+
+/* Form voor logout-knop in navbar */
+.logout-form {
+    display: inline;
+}
+
+/* Responsive navbar (mobiel) */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background-color: var(--color-darkred) !important;
+        padding-bottom: 1rem;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .navbar-nav .nav-link {
+        color: var(--color-white) !important;
+    }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--color-orange) !important;
+            background: rgba(0,0,0,0.08);
+            border-bottom: none;
+        }
+}
+
+/* =========================
+   HERO SECTION (HOME)
+   ========================= */
+.hero-section {
+    position: relative;
+    width: 100vw;
+    height: calc(100vh - 98px); /* pas 98px aan naar navbar-hoogte */
+    min-height: 0;
+    margin-left: calc(-50vw + 50%);
+    background-image: url('/img/HeroImgFOOdBAR.jpg');
+    background-size: cover;
+    background-position: center;
+    background-color: var(--color-offwhite);
+}
+
+/* Reserveer-knop rechtsboven in hero */
+.reserveer-knop {
+    position: absolute;
+    top: 30px;
+    right: 5%;
+    z-index: 2;
+    background-color: var(--color-orange);
+    text-decoration: none;
+    border: none;
+    color: var(--color-darkgray);
+    font-size: 2rem;
+    padding: 0.75em 2em;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(47,49,55,0.08);
+    transition: background 0.2s, color 0.2s;
+    font-weight: 600;
+}
+
+    .reserveer-knop:hover,
+    .reserveer-knop:focus {
+        background-color: var(--color-darkred);
+        color: var(--color-white);
+    }
+
+/* Info box linksonder in hero */
+.info-box {
+    position: absolute;
+    left: 50px;
+    bottom: 30px;
+    width: 350px;
+    background: var(--color-offwhite);
+    box-shadow: 0 4px 16px rgba(47,49,55,0.10);
+    border-radius: 12px;
+    padding: 1.5em 1.2em;
+    z-index: 2;
+    font-size: 1rem;
+    color: var(--color-darkgray);
+}
+
+    .info-box h5 {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        font-weight: bold;
+        color: var(--color-darkred);
+    }
+
+/* Responsive hero en info box (mobiel) */
+@media (max-width: 768px) {
+    .hero-section {
+        height: auto;
+        min-height: 350px;
+        padding-top: 110px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .reserveer-knop,
+    .info-box {
+        position: static;
+        width: 90vw;
+        max-width: 100%;
+        margin: 20px auto 0 auto;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        text-align: center;
+    }
+
+    .info-box {
+        margin-top: 10px;
+        padding: 1em 0.5em;
+    }
+}
+
+/* =========================
+   TAFEL/INDEX (TABEL)
+   ========================= */
+.tafel-table {
+    background: var(--color-offwhite);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(47,49,55,0.08);
+    border: none;
+}
+
+    .tafel-table thead {
+        background: var(--color-darkred);
+        color: var(--color-white);
+        border: none;
+    }
+
+    .tafel-table th {
+        border: none;
+        font-family: 'Anton', Arial, sans-serif;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .tafel-table td {
+        border: none;
+        font-size: 1.05rem;
+        color: var(--color-darkgray);
+        background: var(--color-offwhite);
+        vertical-align: middle;
+        padding: 0.75rem 1rem;
+    }
+
+    .tafel-table tr:not(:last-child) {
+        border-bottom: 1px solid #e5e5e5;
+    }
+
+    /* Badges in tabel */
+    .tafel-table .badge.bg-success {
+        background-color: var(--color-orange) !important;
+        color: var(--color-darkgray) !important;
+        font-weight: 600;
+    }
+
+    .tafel-table .badge.bg-secondary {
+        background-color: var(--color-darkgray) !important;
+        color: var(--color-offwhite) !important;
+        font-weight: 600;
+    }
+
+    /* Bewerken/verwijderen knoppen in tabel */
+    .tafel-table .btn-warning {
+        background-color: var(--color-orange);
+        border: none;
+        color: var(--color-darkgray);
+        font-weight: 600;
+    }
+
+        .tafel-table .btn-warning:hover {
+            background-color: #cf7a00;
+            color: var(--color-white);
+        }
+
+    .tafel-table .btn-danger {
+        background-color: var(--color-darkred);
+        border: none;
+        color: var(--color-white);
+        font-weight: 600;
+    }
+
+        .tafel-table .btn-danger:hover {
+            background-color: #7a2200;
+            color: var(--color-white);
+        }
+
+/* =========================
+   ALGEMENE BUTTONS (ALLE PAGINA'S)
+   ========================= */
+.btn-custom,
+.btn-primary {
+    background-color: var(--color-orange);
+    color: var(--color-darkgray);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Anton', Arial, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.6em 1.6em;
+    box-shadow: 0 2px 8px rgba(47,49,55,0.08);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .btn-custom:hover,
+    .btn-primary:hover,
+    .btn-custom:focus,
+    .btn-primary:focus {
+        background-color: var(--color-darkred);
+        color: var(--color-white);
+        box-shadow: 0 4px 16px rgba(47,49,55,0.12);
+        outline: none;
+    }
+
+.btn-warning {
+    background-color: var(--color-orange);
+    color: var(--color-darkgray);
+    border: none;
+    font-family: 'Anton', Arial, sans-serif;
+    font-weight: 600;
+}
+
+    .btn-warning:hover,
+    .btn-warning:focus {
+        background-color: #cf7a00;
+        color: var(--color-white);
+    }
+
+.btn-danger {
+    background-color: var(--color-darkred);
+    color: var(--color-white);
+    border: none;
+    font-family: 'Anton', Arial, sans-serif;
+    font-weight: 600;
+}
+
+    .btn-danger:hover,
+    .btn-danger:focus {
+        background-color: #7a2200;
+        color: var(--color-white);
+    }
+
+.btn-secondary {
+    background-color: var(--color-darkgray);
+    color: var(--color-offwhite);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Anton', Arial, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.6em 1.6em;
+    box-shadow: 0 2px 8px rgba(47,49,55,0.08);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .btn-secondary:hover,
+    .btn-secondary:focus {
+        background-color: var(--color-orange);
+        color: var(--color-darkgray);
+        box-shadow: 0 4px 16px rgba(47,49,55,0.12);
+        outline: none;
+    }
+
+/* =========================
+   FORMULIEREN (TAFEL/CREATE, ETC.)
+   ========================= */
+.tafel-form-container {
+    max-width: 480px;
+    background: var(--color-offwhite);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(47,49,55,0.08);
+    padding: 2.5rem 2rem 2rem 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-table {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.2rem;
+}
+
+.form-label {
+    min-width: 140px;
+    font-weight: 600;
+    color: var(--color-darkred);
+    font-family: 'Anton', Arial, sans-serif;
+    padding-top: 0.4rem;
+}
+
+.form-control, .form-check-input {
+    border-radius: 6px;
+    border: 1px solid #e5e5e5;
+    font-size: 1.05rem;
+    background: var(--color-white);
+    color: var(--color-darkgray);
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.2s;
+}
+
+    .form-control:focus, .form-check-input:focus {
+        border-color: var(--color-orange);
+        outline: none;
+        box-shadow: 0 0 0 0.1rem var(--color-orange, #FA9500);
+    }
+
+.form-check-input {
+    margin-top: 0.5rem;
+}
+
+/* =========================
+   UNDER CONSTRUCTION PAGE
+   ========================= */
+.under-construction-container {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-offwhite);
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(47,49,55,0.10);
+    margin: 3rem auto;
+    max-width: 520px;
+    padding: 2.5rem 2rem;
+}
+
+.under-construction-content {
+    text-align: center;
+}
+
+.under-construction-icon span {
+    font-size: 4rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.under-construction-content h1 {
+    font-family: 'Anton', Arial, sans-serif;
+    color: var(--color-darkred);
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.under-construction-content p {
+    color: var(--color-darkgray);
+    font-size: 1.15rem;
+    margin-bottom: 2rem;
+}

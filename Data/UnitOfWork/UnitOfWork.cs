@@ -9,10 +9,9 @@
         public ICategorieRepository Categorieen { get; }
         public IProductRepository Producten { get; }
         public ICategorieTypeRepository CategorieTypen { get; }
-
         public IStatusRepository Statussen { get; }
-
         public IReservatieRepository Reservaties { get; }
+        public RestaurantContext RestaurantContext => _context;
 
         public UnitOfWork(RestaurantContext context)
         {
@@ -25,6 +24,12 @@
             CategorieTypen = new CategorieTypeRepository(_context);
             Statussen = new StatusRepository(_context);
             Reservaties = new ReservatieRepository(_context);
+            Reservaties = new ReservatieRepository(_context);
+        }
+
+        public int Save()
+        {
+            return _context.SaveChanges();
         }
 
         public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();

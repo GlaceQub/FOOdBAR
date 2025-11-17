@@ -25,5 +25,9 @@
 
         // Reservatie related
         IReservatieRepository Reservaties { get; }
+        
+        RestaurantContext RestaurantContext { get; }
+        Task<int> CompleteAsync();
+        int Save();
     }
 }

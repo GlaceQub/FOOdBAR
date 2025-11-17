@@ -82,13 +82,11 @@ namespace Restaurant.Controllers
         {
             model.Landen = await GetLandenSelectListAsync();
 
-            // If "Terug" was pressed, just show the registration form with filled data
             if (!string.IsNullOrEmpty(terug))
             {
                 return View(model);
             }
 
-            // Check if email already exists
             if (ModelState.IsValid)
             {
                 var existingUser = await _userManager.FindByEmailAsync(model.Email);
@@ -98,11 +96,14 @@ namespace Restaurant.Controllers
                     return View(model);
                 }
 
-                // No user found, show confirmation page
+                // Lookup country name and set it
+                var land = (await _unitOfWork.Landen.GetActieveLandenAsync())
+                    .FirstOrDefault(l => l.Id == model.Land);
+                model.LandNaam = land?.Naam;
+
                 return View("RegistratieBevestigen", model);
             }
 
-            // If model is not valid, show registration form with errors
             return View(model);
         }
 
