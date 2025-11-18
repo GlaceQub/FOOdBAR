@@ -1,0 +1,128 @@
+﻿@model Restaurant.ViewModels.Rekening.AfrekenenViewModel
+@{
+    var tafelNummer = Model.TafelNummer;
+    ViewData["Title"] = $"Rekening tafel {tafelNummer}";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>Klant: @Model.KlantVoornaam @Model.KlantNaam</h4>
+
+<div class="card bg-warning-subtle shadow-sm mb-4">
+    <div class="card-header fw-bold bg-warning text-dark">Bestellingen</div>
+    <div class="card-body p-0">
+        <table class="table table-warning table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Aantal</th>
+                    <th>Prijs eenheid</th>
+                    <th>Prijs</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var bestelling in Model.BestellingenInfoRekening)
+                {
+                    <tr>
+                        <td>@bestelling.ProductNaam</td>
+                        <td>@bestelling.Aantal</td>
+                        <td>&euro; @bestelling.PrijsPerEenheid.ToString("0.00")</td>
+                        <td>&euro; @(bestelling.PrijsPerEenheid * bestelling.Aantal)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-end fw-bold bg-warning text-dark">
+        Totaal: &euro; @Model.TotaalPrijs.ToString("0.00")
+    </div>
+</div>
+
+<form id="afrekenenForm" method="post" asp-action="Afrekenen" asp-controller="Rekening">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="ReservatieId" value="@Model.ReservatieId" />
+    <div class="mb-3">
+        <label class="form-label fw-bold">Betaalmethode:</label>
+        <div>
+            <input type="radio" class="btn-check" name="BetaalMethode" id="cash" value="Cash" autocomplete="off" checked>
+            <label class="btn btn-outline-warning fw-bold me-2" for="cash">
+                <i class="bi bi-cash-coin me-2"></i>Cash
+            </label>
+
+            <input type="radio" class="btn-check" name="BetaalMethode" id="payconic" value="Payconic" autocomplete="off">
+            <label class="btn btn-outline-warning fw-bold" for="payconic">
+                <i class="bi bi-phone me-2"></i>Payconic
+            </label>
+        </div>
+        @Html.ValidationMessageFor(m => m.BetaalMethode, "", new { @class = "text-danger mt-2" })
+    </div>
+
+    <div id="cash-section">
+        <button type="button" class="btn btn-warning" id="cashBetalenBtn">Cash betalen</button>
+    </div>
+    <div id="payconic-section" style="display:none;">
+        <div class="alert alert-info mb-2">
+            <i class="bi bi-phone fs-4 me-2"></i>
+            Scan de QR-code met de Payconic app om te betalen.
+        </div>
+        <button type="submit" class="btn btn-warning" disabled>betaling via Payconic nog niet geïmplementeerd</button>
+    </div>
+</form>
+
+<!-- Cash Betalen Modal -->
+<div class="modal fade" id="cashBetalenModal" tabindex="-1" aria-labelledby="cashBetalenModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-warning">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="cashBetalenModalLabel">
+          <i class="bi bi-cash-coin me-2"></i>Cash betaling bevestigen
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sluiten"></button>
+      </div>
+      <div class="modal-body">
+        <p>Totaal bedrag ontvangen: <strong>&euro; @Model.TotaalPrijs.ToString("0.00")</strong></p>
+        <p>Bevestig dat u het bedrag heeft ontvangen.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
+        <button type="button" class="btn btn-warning" id="confirmCashBtn">Bevestigen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const cashRadio = document.getElementById("cash");
+        const payconicRadio = document.getElementById("payconic");
+        const cashSection = document.getElementById("cash-section");
+        const payconicSection = document.getElementById("payconic-section");
+        const cashBetalenBtn = document.getElementById("cashBetalenBtn");
+        const confirmCashBtn = document.getElementById("confirmCashBtn");
+        const afrekenenForm = document.getElementById("afrekenenForm");
+
+        function updatePaymentSection() {
+            if (cashRadio.checked) {
+                cashSection.style.display = "";
+                payconicSection.style.display = "none";
+            } else {
+                cashSection.style.display = "none";
+                payconicSection.style.display = "";
+            }
+        }
+
+        cashRadio.addEventListener("change", updatePaymentSection);
+        payconicRadio.addEventListener("change", updatePaymentSection);
+        updatePaymentSection();
+
+        // Show modal when cash betalen is clicked
+        cashBetalenBtn.addEventListener("click", function () {
+            var modal = new bootstrap.Modal(document.getElementById('cashBetalenModal'));
+            modal.show();
+        });
+
+        // Submit form when bevestigen is clicked in modal
+        confirmCashBtn.addEventListener("click", function () {
+            afrekenenForm.submit();
+        });
+    });
+</script>

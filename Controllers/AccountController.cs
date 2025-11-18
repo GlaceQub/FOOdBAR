@@ -21,6 +21,7 @@ namespace Restaurant.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize(Roles = "Klant, Eigenaar, Zaalverantwoordelijke, Kok, Ober")]
         [HttpGet("Dashboard")]
         public IActionResult Dashboard()
         {
@@ -81,6 +82,29 @@ namespace Restaurant.Controllers
         {
             model.Landen = await GetLandenSelectListAsync();
 
+            // Debugging: if ModelState is invalid, log all errors and show a summary on the page
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Where(kvp => kvp.Value.Errors.Count > 0)
+                    .Select(kvp => new
+                    {
+                        Field = kvp.Key,
+                        Errors = kvp.Value.Errors.Select(e => string.IsNullOrEmpty(e.ErrorMessage) ? e.Exception?.Message : e.ErrorMessage).ToArray()
+                    })
+                    .ToList();
+
+                System.Diagnostics.Debug.WriteLine("Registratie ModelState is invalid:");
+                foreach (var e in errors)
+                {
+                    System.Diagnostics.Debug.WriteLine($"{e.Field}: {string.Join(", ", e.Errors)}");
+                }
+
+                // Add a top-level message so the view shows a summary (helps when client doesn't show field errors)
+                ModelState.AddModelError(string.Empty, "Validatie mislukt — controleer de velden hieronder.");
+                return View(model);
+            }
+
             if (!string.IsNullOrEmpty(terug))
             {
                 return View(model);
@@ -133,6 +157,9 @@ namespace Restaurant.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                // Assign "Klant" role to new user
+                await _userManager.AddToRoleAsync(user, "Klant");
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Dashboard", "Account");
             }

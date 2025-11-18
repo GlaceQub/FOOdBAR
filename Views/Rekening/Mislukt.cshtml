@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Betaling Mislukt";
+    var reservatieId = ViewBag.ReservatieId;
+    var betaalMethode = ViewBag.BetaalMethode;
+    var errorType = ViewBag.ErrorType as string;
+    var isDefaultError = string.IsNullOrEmpty(errorType);
+}
+
+<div class="container d-flex justify-content-center" style="margin-top: 60px;">
+    <div class="col-md-8">
+        @if (isDefaultError)
+        {
+            <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                <i class="bi bi-x-circle-fill fs-2 me-3"></i>
+                <div>
+                    <h4 class="alert-heading mb-1">Betaling mislukt!</h4>
+                    <p class="mb-0">
+                        Helaas is de betaling voor reservatie <strong>#@reservatieId</strong> niet gelukt.<br />
+                        @if (!string.IsNullOrEmpty(betaalMethode))
+                        {
+                            <span>Betaalmethode: <strong>@betaalMethode</strong></span>
+                            <br />
+                        }
+                        Probeer het opnieuw of probeer te betalen met cash.
+                    </p>
+                </div>
+            </div>
+        }
+        else if (errorType == "reedsBetaald")
+        {
+            <div class="alert alert-warning d-flex align-items-center mb-4 border border-warning-subtle" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-2 me-3 text-warning"></i>
+                <div>
+                    <h4 class="alert-heading mb-1 text-warning">Reeds betaald</h4>
+                    <p class="mb-0">
+                        Deze reservatie <strong>#@reservatieId</strong> is al betaald.<br />
+                        @if (!string.IsNullOrEmpty(betaalMethode))
+                        {
+                            <span>Er werd geprobeerd om te betalen met: <strong>@betaalMethode</strong></span>
+                            <br />
+                        }
+                    </p>
+                </div>
+            </div>
+        }
+        <div class="text-center">
+            @if (isDefaultError)
+            {
+                <a href="/Rekening/Afrekenen/@reservatieId" class="btn btn-danger">
+                    Opnieuw proberen
+                </a>
+                <br />
+            }
+            <a href="/Reservaties/Index" class="btn btn-warning">
+                Terug naar reservaties
+            </a>
+        </div>
+    </div>
+</div>

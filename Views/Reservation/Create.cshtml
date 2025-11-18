@@ -11,7 +11,7 @@
             <form method="post" id="reservationForm">
                 <div class="mb-3">
                     <label asp-for="Datum" class="form-label">Datum</label>
-                    <input asp-for="Datum" class="form-control" type="date" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                    <input asp-for="Datum" class="form-control" type="date" required/>
                     <span asp-validation-for="Datum" class="text-danger"></span>
                 </div>
                 
@@ -59,7 +59,7 @@
                     <label asp-for="Opmerking" class="form-label">Speciale verzoeken</label>
                     <textarea asp-for="Opmerking" class="form-control" rows="2"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Reserveer</button>
+                <button type="submit" class="btn btn-custom-primary w-100">Reserveer</button>
             </form>
         </div>
     </div>
