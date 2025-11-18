@@ -15,18 +15,7 @@
     <div class="col-md-8">
         <h2 class="mb-4 text-center">Registratie</h2>
 
-        @{
-            var errors = ViewData.ModelState[string.Empty]?.Errors;
-            if (errors != null && errors.Count > 0)
-            {
-                <div class="alert alert-danger fw-bold text-center" role="alert">
-                    @foreach (var error in errors)
-                    {
-                        <div>@error.ErrorMessage</div>
-                    }
-                </div>
-            }
-        }
+        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
 
         <form asp-action="Registratie" method="post">
             <div class="row">

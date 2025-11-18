@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using AspNetCoreGeneratedDocument;
+using Microsoft.AspNetCore.SignalR;
 using Restaurant.Models;
 
 namespace Restaurant.Controllers
@@ -200,7 +201,7 @@ namespace Restaurant.Controllers
 
                 // TODO: Bevestigingsmail sturen en notificaties verwerken
 
-                return RedirectToAction("Bevestiging");
+                return RedirectToAction("Bevestiging", new { reservatieId = model.ReservatieId });
             }
             else
             {
@@ -215,8 +216,9 @@ namespace Restaurant.Controllers
         }
 
         [Authorize(Roles = "Eigenaar, Klant")]
-        public async Task<IActionResult> Bevestiging()
+        public async Task<IActionResult> Bevestiging(int reservatieId)
         {
+            ViewBag.ReservatieId = reservatieId;
             return View();
         }
 
