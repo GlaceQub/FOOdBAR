@@ -2,6 +2,7 @@
 {
     public class ReservationViewModel
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "Datum is verplicht")]
         [DataType(DataType.Date)]
         public DateTime Datum { get; set; }
