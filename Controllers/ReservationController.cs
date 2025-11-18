@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace Restaurant.Controllers
 {
-    [Authorize(Roles = "Eigenaar")]
+    [Authorize]
     public class ReservationController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -21,7 +21,7 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Reservation/Create
-        [Authorize]
+        [Authorize(Roles = "Klant, Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -41,6 +41,7 @@ namespace Restaurant.Controllers
         }
 
         // POST: /Reservation/Create
+        [Authorize(Roles = "Klant, Zaalverantwoordelijke, Eigenaar")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(ReservationViewModel model)
@@ -92,6 +93,7 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Reservation/Confirmation/{id}
+        [Authorize(Roles = "Klant, Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Confirmation(int id)
         {
@@ -102,7 +104,7 @@ namespace Restaurant.Controllers
             return View(reservatie);
         }
 
-        [Authorize(Roles = "Eigenaar,Zaalverantwoordelijke")]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Index(DateTime? datum)
         {
@@ -115,7 +117,7 @@ namespace Restaurant.Controllers
             return View(reservaties);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
@@ -125,7 +127,7 @@ namespace Restaurant.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -155,7 +157,7 @@ namespace Restaurant.Controllers
             return View(model);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, ReservationViewModel model)

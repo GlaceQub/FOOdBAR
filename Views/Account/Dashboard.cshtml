@@ -11,15 +11,15 @@
 
         @if (User.IsInRole("Eigenaar") || User.IsInRole("Zaalverantwoordelijke"))
         {
-            <a asp-controller="Tafel" asp-action="Index" class="btn btn-primary mt-3 ms-2">
+            <a asp-controller="Tafel" asp-action="Index" class="btn btn-custom-primary mt-3 ms-2">
                 Tafels beheren
             </a>
 
-            <a asp-controller="Reservation" asp-action="Toewijzen" class="btn btn-primary mt-3 ms-2">
+            <a asp-controller="Reservation" asp-action="Toewijzen" class="btn btn-custom-primary mt-3 ms-2">
                 Tafels toewijzen
             </a>
 
-            <a asp-controller="Reservation" asp-action="Index" class="btn btn-primary mt-3 ms-2">
+            <a asp-controller="Reservation" asp-action="Index" class="btn btn-custom-primary mt-3 ms-2">
                 Reservaties bekijken
             </a>
         }
