@@ -6,6 +6,12 @@ public class CategorieTypeRepository : ICategorieTypeRepository
         _context = context;
     }
 
+    public IEnumerable<CategorieType> GetAll()
+    {
+        return _context.Types
+            .ToList();
+    }
+
     public async Task<IEnumerable<CategorieType>> GetAllWithCategoriesAndProductsAsync()
     {
         return await _context.Types
