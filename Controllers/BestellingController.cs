@@ -36,7 +36,7 @@ namespace Restaurant.Controllers
                 { 4, "danger" },    // Geannuleerd
                 { 5, "warning" }    // Toegevoegd
             };
-            
+
             var model = new BestellingOverzichtViewModel
             {
                 Bestellingen = filteredBestellingen,
@@ -236,6 +236,7 @@ namespace Restaurant.Controllers
                         {
                             Naam = c.Naam,
                             Producten = c.Producten
+                                .Where(p => p.Actief)
                                 .OrderBy(p => p.Id)
                                 .Select(p => new ProductViewModel
                                 {
