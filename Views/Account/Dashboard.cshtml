@@ -27,5 +27,11 @@
                 Categorieën beheren
             </a>
         }
+        @if (User.IsInRole("Eigenaar"))
+        {
+            <a asp-controller="Account" asp-action="Gebruikers" class="btn btn-custom-primary mt-3 ms-2">
+                Gebruikers beheren
+            </a>
+        }
     }
 </div>
