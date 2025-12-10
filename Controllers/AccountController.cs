@@ -194,7 +194,7 @@ namespace Restaurant.Controllers
         {
             var users = await _userManager.Users.ToListAsync();
             // Filter out deleted users
-            users = users.Where(u => u.Email != "Verwijderd").ToList();
+            users = users.Where(u => u.Email != null).ToList();
 
             var viewModel = new List<GebruikerViewModel>();
 
@@ -334,17 +334,31 @@ namespace Restaurant.Controllers
             if (roles.Any())
                 await _userManager.RemoveFromRolesAsync(gebruiker, roles);
 
-            // Set required fields to "<<Verwijderd>>", others to null or empty
-            gebruiker.Email = "Verwijderd";
             gebruiker.UserName = "Verwijderd";
-            gebruiker.Voornaam = "Verwijderd";
-            gebruiker.Achternaam = "Verwijderd";
+            // Set all nullable fields to null
+            gebruiker.Voornaam = null;
+            gebruiker.Achternaam = null;
             gebruiker.Adres = null;
             gebruiker.Huisnummer = null;
             gebruiker.Postcode = null;
             gebruiker.Gemeente = null;
-            gebruiker.LandId = 1;
+            gebruiker.NormalizedUserName = null;
+            gebruiker.Email = null;
+            gebruiker.NormalizedEmail = null;
+            gebruiker.PasswordHash = null;
+            gebruiker.SecurityStamp = Guid.NewGuid().ToString();
+            gebruiker.ConcurrencyStamp = Guid.NewGuid().ToString();
+            gebruiker.PhoneNumber = null;
+            gebruiker.LockoutEnd = null;
+
+            // Set non-nullable fields to safe defaults or placeholders
             gebruiker.Actief = false;
+            gebruiker.LandId = 1; // or a default
+            gebruiker.EmailConfirmed = false;
+            gebruiker.PhoneNumberConfirmed = false;
+            gebruiker.TwoFactorEnabled = false;
+            gebruiker.LockoutEnabled = true;
+            gebruiker.AccessFailedCount = 0;
 
             var result = await _userManager.UpdateAsync(gebruiker);
             if (result.Succeeded)
