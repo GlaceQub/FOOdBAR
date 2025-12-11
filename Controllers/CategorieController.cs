@@ -96,6 +96,7 @@ namespace Restaurant.Controllers
             return View(model);
         }
 
+        // POST: /Categorie/Delete/id
         [HttpPost]
         public IActionResult Delete(int id)
         {
