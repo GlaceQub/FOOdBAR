@@ -6,15 +6,21 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    public void Update(Product product)
+    public async Task Update(Product product)
     {
         _context.Producten.Update(product);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
     public async Task Add(Product product)
     {
         await _context.Producten.AddAsync(product);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task Delete(Product product)
+    {
+        _context.Producten.Remove(product);
         await _context.SaveChangesAsync();
     }
 

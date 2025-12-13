@@ -2,6 +2,6 @@
 {
     public interface IPrijsProductRepository
     {
-        public void Add(PrijsProduct prijsProduct);
+        public Task Add(PrijsProduct prijsProduct);
     }
 }

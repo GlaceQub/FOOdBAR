@@ -7,10 +7,10 @@
         {
             _context = context;
         }
-        public void Add(PrijsProduct prijsProduct)
+        public async Task Add(PrijsProduct prijsProduct)
         {
-            _context.PrijsProducten.Add(prijsProduct);
-            _context.SaveChanges();
+            await _context.PrijsProducten.AddAsync(prijsProduct);
+            await _context.SaveChangesAsync();
         }
     }
 }

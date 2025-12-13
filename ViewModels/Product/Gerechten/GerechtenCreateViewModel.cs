@@ -14,6 +14,6 @@
         public decimal Prijs { get; set; }
 
         // Voor dropdown
-        public List<Categorie> CategorieList { get; set; }
+        public List<Categorie> CategorieList { get; set; } = new();
     }
 }
