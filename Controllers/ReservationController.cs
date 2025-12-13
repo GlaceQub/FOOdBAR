@@ -46,6 +46,7 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ReservationViewModel model)
         {
+
             model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                 .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
                 .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
@@ -57,6 +58,15 @@ namespace Restaurant.Controllers
 
             if (!ModelState.IsValid)
             {
+                model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList();
+                model.DinerTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList();
+
                 return View(model);
             }
 
