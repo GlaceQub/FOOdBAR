@@ -8,6 +8,7 @@
         public ITafelLijstRepository TafelLijsten { get; }
         public ICategorieRepository Categorieen { get; }
         public IProductRepository Producten { get; }
+        public IPrijsProductRepository PrijsProducten { get; }
         public ICategorieTypeRepository CategorieTypen { get; }
         public IStatusRepository Statussen { get; }
         public IReservatieRepository Reservaties { get; }
@@ -21,6 +22,7 @@
             TafelLijsten = new TafelLijstRepository(_context);
             Categorieen = new CategorieRepository(_context);
             Producten = new ProductRepository(_context);
+            PrijsProducten = new PrijsProductRepository(_context);
             CategorieTypen = new CategorieTypeRepository(_context);
             Statussen = new StatusRepository(_context);
             Reservaties = new ReservatieRepository(_context);

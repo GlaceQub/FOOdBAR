@@ -20,6 +20,9 @@
         // Product related
         IProductRepository Producten { get; }
 
+        // PrijsProduct related
+        IPrijsProductRepository PrijsProducten { get; }
+
         // Status related
         IStatusRepository Statussen { get; }
 

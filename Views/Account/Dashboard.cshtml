@@ -26,6 +26,15 @@
             <a asp-controller="Categorie" asp-action="Index" class="btn btn-custom-primary mt-3 ms-2">
                 Categorieën beheren
             </a>
+
+            <a asp-controller="Product" asp-action="Gerechten" class="btn btn-custom-primary mt-3 ms-2">
+                Gerechten beheren
+            </a>
+
+            <a asp-controller="Product" asp-action="Dranken" class="btn btn-custom-primary mt-3 ms-2">
+                Dranken beheren
+            </a>
+
         }
         @if (User.IsInRole("Eigenaar"))
         {
