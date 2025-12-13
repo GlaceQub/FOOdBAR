@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Restaurant.Models.Product>
 @{
     ViewData["Title"] = "Gerechten";
+    var selectedFilter = (ViewBag.SelectedFilter as string) ?? "active";
 }
 
 <h1 class="mb-4">Gerechten</h1>
@@ -17,7 +18,14 @@
             <th>Prijs</th>
             <th>Allergenen</th>
             <th>Categorie</th>
-            <th>Actief</th>
+            <th>
+                <form method="get" asp-action="Gerechten" class="d-inline ms-2">
+                    <select name="filter" class="form-select form-select-sm header-filter" onchange="this.form.submit()">
+                        <option value="active" selected="@(selectedFilter == "active" ? "selected" : null)">Actief</option>
+                        <option value="inactive" selected="@(selectedFilter == "inactive" ? "selected" : null)">Inactief</option>
+                    </select>
+                </form>
+            </th>
             <th>Suggestie</th>
             <th>Acties</th>
         </tr>
@@ -50,12 +58,14 @@
                     {
                         <span class="badge bg-secondary">Nee</span>
                     }
+                </td>
                 <td>
                     <a asp-action="EditGerecht" asp-route-id="@p.Id" class="btn btn-warning btn-sm">Wijzigen</a>
-                    <form asp-action="Delete" asp-route-id="@p.Id" method="post" style="display:inline;">
+                    <form asp-action="DeleteGerecht" asp-route-id="@p.Id" method="post" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je dit gerecht wilt verwijderen?');">Verwijderen</button>
                     </form>
                 </td>
             </tr>
         }
     </tbody>
+</table>

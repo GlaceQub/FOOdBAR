@@ -10,6 +10,7 @@
         [Required(ErrorMessage = "Categorie is verplicht")]
         public int CategorieId { get; set; }
         public bool Actief { get; set; }
+        public bool Suggestie { get; set; }
         [Required(ErrorMessage = "Prijs is verplicht")]
         public decimal Prijs { get; set; }
 

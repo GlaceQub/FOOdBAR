@@ -15,10 +15,20 @@ namespace Restaurant.Controllers
         // ------------------------------------------//
 
         // GET: /Product/Gerechten
-        public async Task<IActionResult> Gerechten()
+        public async Task<IActionResult> Gerechten(string filter = "active")
         {
             var producten = await _unitOfWork.Producten.GetAllWithCategorieAndPricesAsync();
-            var gerechten = producten.Where(p => p.Categorie != null && (p.Categorie.TypeId == 2 || p.Categorie.TypeId == 3 || p.Categorie.TypeId == 4)).ToList();
+
+            var query = producten.Where(p => p.Categorie != null &&
+                                             (p.Categorie.TypeId == 2 || p.Categorie.TypeId == 3 || p.Categorie.TypeId == 4));
+
+            if (string.Equals(filter, "active", StringComparison.OrdinalIgnoreCase))
+                query = query.Where(p => p.Actief);
+            else if (string.Equals(filter, "inactive", StringComparison.OrdinalIgnoreCase))
+                query = query.Where(p => !p.Actief);
+
+            var gerechten = query.ToList();
+            ViewBag.SelectedFilter = filter;
             return View("Gerechten/Index", gerechten);
         }
 
@@ -37,6 +47,7 @@ namespace Restaurant.Controllers
                 AllergenenInfo = product.AllergenenInfo,
                 CategorieId = product.CategorieId,
                 Actief = product.Actief,
+                IsSuggestie = product.IsSuggestie,
                 Prijs = product.PrijsProducten.OrderByDescending(pp => pp.DatumVanaf).FirstOrDefault()?.Prijs ?? 0,
                 CategorieList = _unitOfWork.Categorieen.GetAll().Where(c => c.TypeId == 2 || c.TypeId == 3 || c.TypeId == 4).ToList()
             };
@@ -46,23 +57,29 @@ namespace Restaurant.Controllers
 
         // POST: /Product/Gerechten/Edit/id
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditGerecht(int id, GerechtenEditViewModel model)
         {
             if (id != model.Id)
                 return BadRequest();
+
             if (!ModelState.IsValid)
             {
                 model.CategorieList = _unitOfWork.Categorieen.GetAll().Where(c => c.TypeId == 2 || c.TypeId == 3 || c.TypeId == 4).ToList();
                 return View("Gerechten/Edit", model);
             }
+
             var product = await _unitOfWork.Producten.GetByIdWithPriceAsync(id);
             if (product == null)
                 return NotFound();
+
             product.Naam = model.Naam;
             product.Beschrijving = model.Beschrijving;
             product.AllergenenInfo = model.AllergenenInfo;
             product.CategorieId = model.CategorieId;
             product.Actief = model.Actief;
+            product.IsSuggestie = model.IsSuggestie;
+
             var huidigePrijsProduct = product.PrijsProducten.OrderByDescending(pp => pp.DatumVanaf).FirstOrDefault();
             if (huidigePrijsProduct == null || huidigePrijsProduct.Prijs != model.Prijs)
             {
@@ -72,10 +89,10 @@ namespace Restaurant.Controllers
                     Prijs = model.Prijs,
                     DatumVanaf = DateTime.Now
                 };
-                _unitOfWork.PrijsProducten.Add(nieuwePrijsProduct);
+                await _unitOfWork.PrijsProducten.Add(nieuwePrijsProduct);
             }
-            _unitOfWork.Producten.Update(product);
-            _unitOfWork.Save();
+
+            await _unitOfWork.Producten.Update(product);
             return RedirectToAction("Gerechten");
         }
 
@@ -89,7 +106,6 @@ namespace Restaurant.Controllers
             return View("Gerechten/Create", viewmodel);
         }
 
-
         // POST: /Product/Gerechten/Create
         [HttpPost]
         public async Task<ActionResult> CreateGerecht(GerechtenCreateViewModel model)
@@ -100,7 +116,6 @@ namespace Restaurant.Controllers
                 return View("Gerechten/Create", model);
             }
 
-
             var newProduct = new Product
             {
                 Naam = model.Naam,
@@ -108,11 +123,10 @@ namespace Restaurant.Controllers
                 AllergenenInfo = model.AllergenenInfo,
                 CategorieId = model.CategorieId,
                 Actief = model.Actief,
-
+                IsSuggestie = model.Suggestie,
             };
 
-            _unitOfWork.Producten.Add(newProduct);
-            _unitOfWork.Save();
+            await _unitOfWork.Producten.Add(newProduct);
 
             var newPrijsProduct = new PrijsProduct
             {
@@ -120,13 +134,12 @@ namespace Restaurant.Controllers
                 Prijs = model.Prijs,
                 DatumVanaf = DateTime.Now
             };
-            _unitOfWork.PrijsProducten.Add(newPrijsProduct);
-            _unitOfWork.Save();
+            await _unitOfWork.PrijsProducten.Add(newPrijsProduct);
 
             return RedirectToAction("Gerechten");
         }
 
-        // POST: /Product/Gerechten/Delete/id
+        // POST: /Product/Gerechten/Delete/id (soft-delete)
         [HttpPost]
         public async Task<IActionResult> DeleteGerecht(int id)
         {
@@ -134,19 +147,41 @@ namespace Restaurant.Controllers
             if (product == null)
                 return NotFound();
 
-            // Niet-verplichte velden op null zetten
+            // Soft-delete: keep history
+            product.Actief = false;
+            product.Naam = !string.IsNullOrWhiteSpace(product.Naam) ? product.Naam + " (verwijderd)" : "VERWIJDERD";
             product.Beschrijving = null;
             product.AllergenenInfo = null;
             product.IsSuggestie = false;
 
-            // Verplichte velden op "VERWIJDERD" zetten
-            product.Naam = "VERWIJDERD";
-            product.CategorieId = 0; 
-            product.Actief = false;
+            var huidigePrijsProduct = product.PrijsProducten?.OrderByDescending(pp => pp.DatumVanaf).FirstOrDefault();
+            if (huidigePrijsProduct == null || huidigePrijsProduct.Prijs != 0m)
+            {
+                var nieuwePrijsProduct = new PrijsProduct
+                {
+                    ProductId = product.Id,
+                    Prijs = 0m,
+                    DatumVanaf = DateTime.Now
+                };
+                await _unitOfWork.PrijsProducten.Add(nieuwePrijsProduct);
+            }
 
-            _unitOfWork.Producten.Update(product);
-            _unitOfWork.Save();
+            await _unitOfWork.Producten.Update(product);
             return RedirectToAction("Gerechten");
+        }
+
+        // POST: /Product/Gerechten/ToggleActief/id
+        [HttpPost]
+        public async Task<IActionResult> ToggleActiefGerecht(int id, bool actief, string returnFilter = "active")
+        {
+            var product = await _unitOfWork.Producten.GetByIdWithPriceAsync(id);
+            if (product == null)
+                return NotFound();
+
+            product.Actief = actief;
+            await _unitOfWork.Producten.Update(product);
+
+            return RedirectToAction("Gerechten", new { filter = returnFilter });
         }
 
         // ------------------------------------------//
@@ -185,6 +220,7 @@ namespace Restaurant.Controllers
                 AllergenenInfo = product.AllergenenInfo,
                 CategorieId = product.CategorieId,
                 Actief = product.Actief,
+                IsSuggestie = product.IsSuggestie,
                 Prijs = product.PrijsProducten.OrderByDescending(pp => pp.DatumVanaf).FirstOrDefault()?.Prijs ?? 0,
                 CategorieList = _unitOfWork.Categorieen.GetAll().Where(c => c.TypeId == 1 || c.TypeId == 2 || c.TypeId == 3 || c.TypeId == 4).ToList()
             };
@@ -194,6 +230,7 @@ namespace Restaurant.Controllers
 
         // POST: /Product/Dranken/Edit/id
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditDrank(int id, GerechtenEditViewModel model)
         {
             if (id != model.Id)
@@ -224,7 +261,7 @@ namespace Restaurant.Controllers
                     Prijs = model.Prijs,
                     DatumVanaf = DateTime.Now
                 };
-            await _unitOfWork.PrijsProducten.Add(nieuwePrijsProduct);
+                await _unitOfWork.PrijsProducten.Add(nieuwePrijsProduct);
             }
             await _unitOfWork.Producten.Update(product);
             return RedirectToAction("Dranken");
@@ -260,7 +297,6 @@ namespace Restaurant.Controllers
             };
 
             await _unitOfWork.Producten.Add(newProduct);
-          
 
             var newPrijsProduct = new PrijsProduct
             {
@@ -269,7 +305,7 @@ namespace Restaurant.Controllers
                 DatumVanaf = DateTime.Now
             };
 
-           await _unitOfWork.PrijsProducten.Add(newPrijsProduct);
+            await _unitOfWork.PrijsProducten.Add(newPrijsProduct);
 
             return RedirectToAction("Dranken");
         }
