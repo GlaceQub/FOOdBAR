@@ -29,7 +29,9 @@ namespace Restaurant.ViewModels.Account
         public string? Gemeente { get; set; }
 
         [Required(ErrorMessage = "Land is verplicht!")]
-        public int Land { get; set; }
+        public int Land { get; set; } = 1;
+
+        public string? LandNaam { get; set; }
 
         public IEnumerable<SelectListItem>? Landen { get; set; }
 
@@ -44,5 +46,10 @@ namespace Restaurant.ViewModels.Account
         [DataType(DataType.Password)]
         [Display(Name = "Herhaal wachtwoord")]
         public string ConfirmPassword { get; set; } = "";
+
+        [Required(ErrorMessage = "Rollen zijn verplicht!")]
+        public IEnumerable<string> Rollen { get; set; } = new List<string> { "Klant" };
+
+        public IEnumerable<SelectListItem> AllRollen { get; set; } = new List<SelectListItem>();
     }
 }

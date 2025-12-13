@@ -4,8 +4,8 @@ namespace Restaurant.Models
 {
     public class CustomUser: IdentityUser
     {
-        [Key]
-        public int Id { get; set; }
+        //[Key]
+        //public int Id { get; set; }
         public string? Voornaam { get; set; }
         public string? Achternaam { get; set; }
         public string? Adres { get; set; }
@@ -13,6 +13,7 @@ namespace Restaurant.Models
         public string? Postcode { get; set; }
         public string? Gemeente { get; set; }
         public bool Actief { get; set; }
+        public string VolledigeNaam => $"{Voornaam} {Achternaam}";
 
         [ForeignKey("Land")]
         public int LandId { get; set; }

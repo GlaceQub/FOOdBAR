@@ -21,6 +21,7 @@ builder.Configuration.GetRequiredSection(nameof(Settings)).Bind(Token.Settings);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ReservatieRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -35,6 +36,9 @@ switch (machineName)
         break;
     case "DESKTOP-K5018T2":
         connectionString = builder.Configuration.GetConnectionString("LanderLaptopDBConnection");
+        break;
+    case "LAPTOP_DAVID":
+        connectionString = builder.Configuration.GetConnectionString("DavidLaptopDBConnection");
         break;
     default:
         connectionString = builder.Configuration.GetConnectionString("LocalDBConnection");
@@ -134,6 +138,16 @@ builder.Services.AddSwaggerGen(swagger => {
     });
 });
 
+// Notification system
+builder.Services.AddSignalR();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 // Add swagger when in development mode
@@ -155,18 +169,28 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseStatusCodePages(async context =>
+{
+    if (context.HttpContext.Response.StatusCode == 404)
+    {
+        context.HttpContext.Response.Redirect("/UnderConstruction");
+    }
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<BestellingNotificationHub>("/bestellingNotificationHub");
+app.UseSession();
 
 // Seed initial user
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<IdentitySeeding>();
     UserManager<CustomUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<CustomUser>>();
-    await seeder.IdentitySeedingAsync(userManager);
+    RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await seeder.IdentitySeedingAsync(userManager, roleManager);
 }
 
 app.Run();

@@ -29,6 +29,8 @@
         [Required(ErrorMessage = "Land is verplicht!")]
         public int Land { get; set; }
 
+        public string LandNaam { get; set; }
+
         [Required(ErrorMessage = "Wachtwoord is verplicht!")]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Het wachtwoord moet minstens 6 tekens bevatten.")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).+$", ErrorMessage = "Het wachtwoord moet minstens één hoofdletter, één kleine letter, één cijfer en één speciaal teken bevatten.")]
