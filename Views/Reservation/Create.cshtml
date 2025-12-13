@@ -7,21 +7,33 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <h2 class="mb-4">Tafel reserveren</h2>
+
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <form method="post" id="reservationForm">
+
+            <form method="post" id="reservationForm" novalidate>
+                @Html.AntiForgeryToken()
+
                 <div class="mb-3">
                     <label asp-for="Datum" class="form-label">Datum</label>
-                    <input asp-for="Datum" class="form-control" type="date" required/>
+                    <input asp-for="Datum"
+                           class="form-control"
+                           type="date"
+                           min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                           data-val="true"
+                           data-val-min="Datum kan niet in het verleden liggen."
+                           data-val-min-min="@DateTime.Today.ToString("yyyy-MM-dd")" />
                     <span asp-validation-for="Datum" class="text-danger"></span>
                 </div>
-                
+
                 <div class="mb-3">
                     <label asp-for="AantalPersonen" class="form-label">Aantal personen</label>
-                    <input asp-for="AantalPersonen" class="form-control" type="number" min="1" required />
+                    <input asp-for="AantalPersonen" class="form-control" type="number" />
                     <span asp-validation-for="AantalPersonen" class="text-danger"></span>
                 </div>
+
                 <div class="mb-3">
                     <label class="form-label" for="TijdSlotId">Tijdslot</label>
+
                     <div>
                         <strong>Lunch</strong>
                         <div class="row" id="lunchTijdslotCards">
@@ -37,6 +49,7 @@
                             }
                         </div>
                     </div>
+
                     <div>
                         <strong>Diner</strong>
                         <div class="row" id="dinerTijdslotCards">
@@ -52,13 +65,16 @@
                             }
                         </div>
                     </div>
+
                     <input type="hidden" asp-for="TijdSlotId" id="TijdSlotId" />
                     <span asp-validation-for="TijdSlotId" class="text-danger"></span>
                 </div>
+
                 <div class="mb-3">
                     <label asp-for="Opmerking" class="form-label">Speciale verzoeken</label>
                     <textarea asp-for="Opmerking" class="form-control" rows="2"></textarea>
                 </div>
+
                 <button type="submit" class="btn btn-custom-primary w-100">Reserveer</button>
             </form>
         </div>
@@ -66,28 +82,40 @@
 </div>
 
 @section Scripts {
-      <partial name="_ValidationScriptsPartial" />
-      <script>
-          // Card selectie logica
-          document.querySelectorAll('.tijdslot-card').forEach(card => {
-              card.addEventListener('click', function () {
-                  document.querySelectorAll('.tijdslot-card').forEach(c => c.classList.remove('border-primary', 'shadow'));
-                  this.classList.add('border-primary', 'shadow');
-                  document.getElementById('TijdSlotId').value = this.getAttribute('data-id');
-              });
-              card.addEventListener('keydown', function (e) {
-                  if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      this.click();
-                  }
-              });
-          });
-          // Form validatie: tijdslot moet gekozen zijn
-          document.getElementById('reservationForm').addEventListener('submit', function (e) {
-              if (!document.getElementById('TijdSlotId').value) {
-                  e.preventDefault();
-                  alert('Kies een tijdslot.');
-              }
-          });
-      </script>
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            if (window.jQuery && jQuery.validator && jQuery.validator.messages) {
+                jQuery.extend(jQuery.validator.messages, {
+                    min: "Datum kan niet in het verleden liggen."
+                });
+            }
+        })();
+    </script>
+
+    <script>
+        // Card selectie logica
+        document.querySelectorAll('.tijdslot-card').forEach(card => {
+            card.addEventListener('click', function () {
+                document.querySelectorAll('.tijdslot-card').forEach(c => c.classList.remove('border-primary', 'shadow'));
+                this.classList.add('border-primary', 'shadow');
+                document.getElementById('TijdSlotId').value = this.getAttribute('data-id');
+            });
+            card.addEventListener('keydown', function (e) {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        });
+
+        // Form validatie: tijdslot moet gekozen zijn (extra UX)
+        document.getElementById('reservationForm').addEventListener('submit', function (e) {
+            if (!document.getElementById('TijdSlotId').value) {
+                e.preventDefault();
+                alert('Kies een tijdslot.');
+            }
+        });
+    </script>
 }
