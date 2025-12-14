@@ -26,6 +26,7 @@ namespace Restaurant.Data
         public DbSet<Parameter> Parameters { get; set; }
         public DbSet<PrijsProduct> PrijsProducten { get; set; }
         public DbSet<Bestelling> Bestellingen { get; set; }
+        public DbSet<Quiz> QuizEigenschappen { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -166,6 +167,7 @@ namespace Restaurant.Data
                     .HasForeignKey(b => b.StatusId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
         }
     }
 }
