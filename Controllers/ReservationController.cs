@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Data.Repository;
-using Restaurant.Data.UnitOfWork; // Voeg deze using toe
+using Restaurant.Data.UnitOfWork;
 using Restaurant.Models;
 using Restaurant.ViewModels.Reservation;
 using Restaurant.ViewModels.Tafel;
@@ -10,6 +10,7 @@ using System.Security.Claims;
 
 namespace Restaurant.Controllers
 {
+    [Authorize]
     public class ReservationController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -20,7 +21,7 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Reservation/Create
-        [Authorize]
+        [Authorize(Roles = "Klant, Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -40,10 +41,12 @@ namespace Restaurant.Controllers
         }
 
         // POST: /Reservation/Create
+        [Authorize(Roles = "Klant, Zaalverantwoordelijke, Eigenaar")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(ReservationViewModel model)
         {
+
             model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                 .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
                 .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
@@ -55,6 +58,15 @@ namespace Restaurant.Controllers
 
             if (!ModelState.IsValid)
             {
+                model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList();
+                model.DinerTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList();
+
                 return View(model);
             }
 
@@ -91,6 +103,7 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Reservation/Confirmation/{id}
+        [Authorize(Roles = "Klant, Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Confirmation(int id)
         {
@@ -101,15 +114,20 @@ namespace Restaurant.Controllers
             return View(reservatie);
         }
 
-        [Authorize(Roles = "Eigenaar,Zaalverantwoordelijke")]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(DateTime? datum)
         {
             var reservaties = _unitOfWork.Reservaties.GetAll();
+
+            DateTime filterDatum = datum ?? DateTime.Today;
+            reservaties = reservaties.Where(r => r.Datum.HasValue && r.Datum.Value.Date == filterDatum.Date);
+            ViewBag.GeselecteerdeDatum = filterDatum;
+
             return View(reservaties);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
@@ -119,7 +137,7 @@ namespace Restaurant.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -129,6 +147,7 @@ namespace Restaurant.Controllers
 
             var model = new ReservationViewModel
             {
+                Id = reservatie.Id,
                 Datum = reservatie.Datum ?? DateTime.Today,
                 TijdSlotId = reservatie.TijdSlotId,
                 AantalPersonen = reservatie.AantalPersonen,
@@ -142,10 +161,13 @@ namespace Restaurant.Controllers
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList()
             };
+
+            ViewBag.TijdslotId = new SelectList(_unitOfWork.RestaurantContext.Tijdslots.Where(t => t.Actief), "Id", "Naam", model.TijdSlotId);
+
             return View(model);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, ReservationViewModel model)
@@ -160,6 +182,9 @@ namespace Restaurant.Controllers
                     .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList();
+
+                ViewBag.TijdslotId = new SelectList(_unitOfWork.RestaurantContext.Tijdslots.Where(t => t.Actief), "Id", "Naam", model.TijdSlotId);
+
                 return View(model);
             }
 
