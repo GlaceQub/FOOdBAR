@@ -225,7 +225,6 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ToewijsTafel(int reservatieId, int tafelId)
         {
-            _unitOfWork.Reservaties.KoppelTafelAanReservatie(reservatieId, tafelId);
 
             var tafel = _unitOfWork.Reservaties.GetTafelById(tafelId);
             if (tafel != null)
