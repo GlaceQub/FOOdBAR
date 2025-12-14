@@ -74,7 +74,7 @@ namespace Restaurant.Controllers
             return View(tafel);
         }
 
-        // GET: /Tafel/Delete/id
+        // GET: /Tafel/Delete/5
         public IActionResult Delete(int id)
         {
             var tafel = _context.Tafels.Find(id);
@@ -89,19 +89,11 @@ namespace Restaurant.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             var tafel = _context.Tafels.Find(id);
-            if (tafel == null)
-                return NotFound();
-
-            // Controleer of er gekoppelde TafelLijst-entries zijn (reservaties)
-            var heeftKoppelingen = _context.TafelLijsten.Any(tl => tl.TafelId == id);
-            if (heeftKoppelingen)
+            if (tafel != null)
             {
-                ModelState.AddModelError("", "Deze tafel kan niet verwijderd worden omdat er reeds één of meerdere reservaties aan gekoppeld zijn. Verwijder eerst de koppelingen of wijs de reservaties aan een andere tafel toe.");
-                return View(tafel);
+                _context.Tafels.Remove(tafel);
+                _context.SaveChanges();
             }
-
-            _context.Tafels.Remove(tafel);
-            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
     }
