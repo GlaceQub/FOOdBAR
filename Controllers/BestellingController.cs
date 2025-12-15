@@ -216,6 +216,7 @@ namespace Restaurant.Controllers
         }
 
         [Authorize(Roles = "Eigenaar, Klant")]
+        [HttpGet("Bestelling/Bevestiging/{reservatieId:int}")]
         public async Task<IActionResult> Bevestiging(int reservatieId)
         {
             ViewBag.ReservatieId = reservatieId;
