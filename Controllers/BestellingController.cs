@@ -91,7 +91,7 @@ namespace Restaurant.Controllers
 
         #region Create (menu)
         [Authorize(Roles = "Klant, Eigenaar")]
-        [HttpGet]
+        [HttpGet("Bestelling/Create/{reservatieId:int}")]
         public async Task<IActionResult> Create(int reservatieId)
         {
             var hasAssignedTable = await _unitOfWork.TafelLijsten.HasAssignedTableAsync(reservatieId);
@@ -112,7 +112,7 @@ namespace Restaurant.Controllers
 
         [Authorize(Roles = "Klant, Eigenaar")]
         [ValidateAntiForgeryToken]
-        [HttpPost]
+        [HttpPost("Bestelling/Create/{reservatieId:int}")]
         public async Task<IActionResult> Create(BestellingCreateViewModel model, string CartItemsJson)
         {
             // Restore cart from hidden field

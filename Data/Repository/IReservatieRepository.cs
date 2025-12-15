@@ -11,6 +11,9 @@ namespace Restaurant.Data.Repository
         Task<Reservatie> GetReservatieByIdAsync(int reservatieId);
 
         IEnumerable<Reservatie> GetAll();
+
+        IEnumerable<Reservatie> GetByKlantId(string klantId);
+
         Reservatie? GetById(int id);
         void Add(Reservatie reservatie);
         void Update(Reservatie reservatie);
