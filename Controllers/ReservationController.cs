@@ -114,11 +114,18 @@ namespace Restaurant.Controllers
             return View(reservatie);
         }
 
-        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar, Klant")]
         [HttpGet]
         public IActionResult Index(DateTime? datum)
         {
-            var reservaties = _unitOfWork.Reservaties.GetAll();
+            var reservaties = Enumerable.Empty<Reservatie>();
+            if (User.IsInRole("Klant"))
+            {
+                var klantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                reservaties = _unitOfWork.Reservaties.GetByKlantId(klantId);
+            }
+            else
+                reservaties = _unitOfWork.Reservaties.GetAll();
 
             DateTime filterDatum = datum ?? DateTime.Today;
             reservaties = reservaties.Where(r => r.Datum.HasValue && r.Datum.Value.Date == filterDatum.Date);
