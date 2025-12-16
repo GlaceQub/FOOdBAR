@@ -1,6 +1,6 @@
 ﻿namespace Restaurant.Data.Repository
 {
-    public class QuizRepository
+    public class QuizRepository : IQuizRepository
     {
         private readonly RestaurantContext _context;
 

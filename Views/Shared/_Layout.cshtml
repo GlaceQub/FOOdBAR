@@ -57,6 +57,14 @@
                                 Home
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(IsActive("Quiz", "Index") ? "active" : "")"
+                               asp-area=""
+                               asp-controller="Quiz"
+                               asp-action="Index">
+                                Quiz
+                            </a>
+                        </li>
                         @if (User.IsInRole("Eigenaar") || User.IsInRole("Zaalverantwoordelijke") || User.IsInRole("Klant"))
                         {
                             <li class="nav-item">
@@ -112,43 +120,6 @@
                 </div>
             </div>
         </nav>
-        <!-- <nav class="custom-navbar">
-            <a class="navbar-brand mx-auto" href="/">
-                <img src="~/img/Logo-FOOdBAR.png" alt="FOOdBAR Logo" class="logo-navbar" />
-            </a>
-            <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Menu" asp-action="Index">Menu</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Photos" asp-action="Index">Foto's</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Reservation" asp-action="Create" asp-action="Index">Reserveren</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a>
-                </li>
-            </ul>
-            @if (User.Identity.IsAuthenticated)
-            {
-                        if (Context.Request.Path.StartsWithSegments("/Account/Dashboard", StringComparison.OrdinalIgnoreCase))
-                        {
-                                    <form asp-controller="Account" asp-action="Logout" method="post" class="justify-content-center">
-                                        <button type="submit" class="nav-link">Logout</button>
-                                    </form>
-                        }
-                        else
-                        {
-                                    <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Dashboard">Account</a>
-                        }
-            }
-            else
-            {
-                        <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Aanmelden</a>
-            }
-
-         </nav> -->
     </header>
     <div class="container">
         <main role="main" class="p-0">

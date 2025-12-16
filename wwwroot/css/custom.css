@@ -34,8 +34,8 @@ html, body {
 .navbar {
     min-height: 80px;
 }
-/* Navigatielinks horizontaal gecentreerd onder het logo */
-/*.navbar .navbar-nav {
+    /* Navigatielinks horizontaal gecentreerd onder het logo */
+    /*.navbar .navbar-nav {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -45,27 +45,27 @@ html, body {
     margin: 0;
     padding: 0;
 }*/
-/* Standaard nav-link styling */
-.navbar .nav-link {
-    color: var(--color-offwhite) !important;
-    font-size: 1.25rem;
-    text-align: center;
-    transition: color 0.2s, border-bottom 0.2s;
-    border-radius: 0px;
-    font-family: 'Antonio', Arial, sans-serif;
-}
-
-    .navbar .nav-link:hover,
-    .navbar .nav-link.active {
-        color: var(--color-orange) !important;
-        /*background: rgba(255,249,235,0.08);*/
-        border-bottom: 2px solid var(--color-orange);
+    /* Standaard nav-link styling */
+    .navbar .nav-link {
+        color: var(--color-offwhite) !important;
+        font-size: 1.25rem;
+        text-align: center;
+        transition: color 0.2s, border-bottom 0.2s;
+        border-radius: 0px;
+        font-family: 'Antonio', Arial, sans-serif;
     }
 
-.navbar .nav-item {
-    margin-left: 1rem;
-    margin-right: 0rem;
-}
+        .navbar .nav-link:hover,
+        .navbar .nav-link.active {
+            color: var(--color-orange) !important;
+            /*background: rgba(255,249,235,0.08);*/
+            border-bottom: 2px solid var(--color-orange);
+        }
+
+    .navbar .nav-item {
+        margin-left: 1rem;
+        margin-right: 0rem;
+    }
 /* "Aanmelden/Account/Logout" knop rechtsboven in de navbar */
 /*.navbar-login {
     position: absolute;
@@ -84,11 +84,11 @@ html, body {
     font-weight: 600;
 }*/
 
-    /*.navbar-login:hover,
+/*.navbar-login:hover,
     .navbar-login.active {
         color: var(--color-orange) !important;*/
-        /*background: rgba(255,249,235,0.08);*/
-        /*border-bottom: 2px solid var(--color-orange);
+/*background: rgba(255,249,235,0.08);*/
+/*border-bottom: 2px solid var(--color-orange);
     }*/
 
 /* Form voor logout-knop in navbar */
@@ -285,41 +285,77 @@ html, body {
         }
 
 /*HEADER TABLE*/
-    .header-filter {
-        background-color: transparent;
-        color: inherit;
-        border: 0;
-        padding: 0.375rem 0.5rem;
-        font-family: inherit;
-        font-size: inherit;
-        font-weight: 600;
-        line-height: 1;
-        min-width: 110px;
-        -webkit-appearance: menulist;
-        appearance: menulist;
+.header-filter {
+    background-color: transparent;
+    color: inherit;
+    border: 0;
+    padding: 0.375rem 0.5rem;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 600;
+    line-height: 1;
+    min-width: 110px;
+    -webkit-appearance: menulist;
+    appearance: menulist;
+}
+
+    .header-filter:focus {
+        outline: none;
+        box-shadow: none;
     }
 
-        .header-filter:focus {
-            outline: none;
-            box-shadow: none;
-        }
-
-        .header-filter option {
-            background-color: #212529; 
-            color: #fff;
-        }
-
-    .table thead th .header-filter {
-        margin: 0;
-        vertical-align: middle;
+    .header-filter option {
+        background-color: #212529;
+        color: #fff;
     }
+
+.table thead th .header-filter {
+    margin: 0;
+    vertical-align: middle;
+}
 
 /* =========================
    ALGEMENE BUTTONS (ALLE PAGINA'S)
    ========================= */
 
+/* Zorg dat link-anchors die als knoppen gebruikt worden geen onderlijning tonen */
+a.btn,
+a.btn-custom-primary,
+a.btn-custom-secondary,
+a.btn-custom-warning,
+a.btn-custom-danger,
+a.reserveer-knop {
+    text-decoration: none;
+    display: inline-block;
+}
+
+    /* Zorg dat hover/focus/visited ook geen underline tonen */
+    a.btn:hover,
+    a.btn-custom-primary:hover,
+    a.btn-custom-secondary:hover,
+    a.btn-custom-warning:hover,
+    a.btn-custom-danger:hover,
+    a.btn:visited,
+    a.btn-custom-primary:visited,
+    a.btn-custom-secondary:visited,
+    a.reserveer-knop:hover,
+    a.reserveer-knop:focus {
+        text-decoration: none;
+    }
+
+    /* Toegankelijke focus-stijl voor link-knoppen */
+    a.btn:focus,
+    a.btn-custom-primary:focus,
+    a.btn-custom-secondary:focus,
+    a.btn-custom-warning:focus,
+    a.btn-custom-danger:focus,
+    a.reserveer-knop:focus {
+        outline: 3px solid rgba(250,149,0,0.15);
+        outline-offset: 2px;
+    }
+
 /*.btn-primary,*/
-.btn-custom-primary{
+.btn-custom-primary {
     background-color: var(--color-orange);
     color: var(--color-darkgray);
     border: none;
@@ -396,6 +432,53 @@ html, body {
     }
 
 /* =========================
+   QUIZ BUTTON (home/hero)
+   ========================= */
+.btn-quiz {
+    /* Maak 'm qua visuele taal vergelijkbaar met reserveer-knop + primaire knoppen */
+    display: inline-block;
+    background: var(--color-orange);
+    color: var(--color-darkgray);
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-family: 'Anton', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 18px rgba(47,49,55,0.08);
+    transition: background 0.18s ease, color 0.18s ease, transform 0.08s ease;
+    text-decoration: none; /* voorkomt onderlijning op anchors */
+    border: none;
+}
+
+    /* Hover / focus / active */
+    .btn-quiz:hover,
+    .btn-quiz:focus {
+        background: var(--color-darkred);
+        color: var(--color-white);
+        transform: translateY(-1px);
+        outline: none;
+        box-shadow: 0 8px 28px rgba(47,49,55,0.12);
+    }
+
+/* Visueel onderscheid in hero: iets groter en aandachtstrekker */
+.hero-section .btn-quiz {
+    font-size: 1.15rem;
+    padding: 0.8rem 1.6rem;
+}
+
+/* Mobiel: zorg dat knop niet te groot is en mooi centreert */
+@media (max-width: 768px) {
+    .hero-section .btn-quiz {
+        display: block;
+        width: calc(90% - 2rem);
+        max-width: 420px;
+        margin: 1rem auto 0 auto;
+    }
+}
+
+/* =========================
    FORMULIEREN (TAFEL/CREATE, ETC.)
    ========================= */
 .tafel-form-container {
@@ -439,16 +522,16 @@ html, body {
     transition: border-color 0.2s;
 }
 
-.form-control:focus, .form-check-input:focus {
+    .form-control:focus, .form-check-input:focus {
         border-color: var(--color-orange);
         outline: none;
         box-shadow: 0 0 0 0.1rem var(--color-orange, #FA9500);
-}
+    }
 
-.form-check-input:checked{
-    background-color: var(--color-orange);
-    border-color: var(--color-orange);
-}
+    .form-check-input:checked {
+        background-color: var(--color-orange);
+        border-color: var(--color-orange);
+    }
 
 .form-check-input {
     margin-top: 0.5rem;
@@ -499,4 +582,210 @@ html, body {
 
 .btn {
     font-family: 'Anton', Arial, sans-serif !important;
+}
+
+/* =========================
+   DRANK QUIZ (QUIZ/DRANK)
+   ========================= */
+.drank-quiz-container {
+    max-width: 600px;
+    margin: 2.5rem auto;
+    background: var(--color-offwhite);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(47,49,55,0.10);
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.drank-quiz-title {
+    font-family: 'Anton', Arial, sans-serif;
+    color: var(--color-darkred);
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.drank-quiz-question {
+    font-size: 1.25rem;
+    color: var(--color-darkgray);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.drank-quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.drank-quiz-option {
+    background: var(--color-white);
+    border: 2px solid var(--color-orange);
+    border-radius: 8px;
+    color: var(--color-darkgray);
+    font-size: 1.1rem;
+    font-family: 'Antonio', Arial, sans-serif;
+    padding: 0.75em 1.2em;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(47,49,55,0.06);
+}
+
+    .drank-quiz-option:hover,
+    .drank-quiz-option.selected {
+        background: var(--color-orange);
+        color: var(--color-white);
+        border-color: var(--color-darkred);
+    }
+
+.drank-quiz-submit {
+    margin-top: 1.5rem;
+    width: 100%;
+    background-color: var(--color-darkred);
+    color: var(--color-white);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Anton', Arial, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    padding: 0.7em 0;
+    box-shadow: 0 2px 8px rgba(47,49,55,0.10);
+    transition: background 0.2s, color 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+    .drank-quiz-submit:hover,
+    .drank-quiz-submit:focus {
+        background-color: var(--color-orange);
+        color: var(--color-darkgray);
+        outline: none;
+    }
+
+/* =========================
+   QUIZ ACTIONS (BACK / NEXT)
+   Plaatsing: logisch bij quiz buttons, direct na .drank-quiz-submit
+   ========================= */
+
+/* Container: twee knoppen naast elkaar, gelijke grootte */
+.quiz-actions {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+    /* Basisstijl voor beide knoppen: gelijke hoogte, lettertype, radius */
+    .quiz-actions button {
+        flex: 1 1 0;
+        min-width: 0;
+        border-radius: 8px;
+        padding: 0.7em 1rem;
+        font-family: 'Anton', Arial, sans-serif;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: 0 2px 8px rgba(47,49,55,0.08);
+        border: none;
+    }
+
+/* Terug-knop: donker theme (zoals btn-custom-secondary) */
+.btn-back {
+    background-color: var(--color-darkgray);
+    color: var(--color-offwhite);
+}
+
+/* Volgende-knop: rood theme (zoals drank-quiz-submit but split layout) */
+.btn-next {
+    background-color: var(--color-darkred);
+    color: var(--color-white);
+}
+
+/* Hover / focus states */
+.btn-back:hover {
+    background-color: #444547;
+    color: var(--color-offwhite);
+    box-shadow: 0 4px 16px rgba(47,49,55,0.12);
+}
+
+.btn-next:hover {
+    background-color: #7a2200;
+    color: var(--color-white);
+    box-shadow: 0 4px 16px rgba(47,49,55,0.12);
+}
+
+.btn-back:focus, .btn-next:focus {
+    outline: 3px solid rgba(250,149,0,0.12);
+    outline-offset: 2px;
+}
+
+/* Disabled state for back button */
+.btn-back[disabled],
+.btn-back[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Zorg dat op small screens de knoppen ook mooi naast elkaar blijven of stapelen wanneer nodig */
+@media (max-width: 520px) {
+    .quiz-actions {
+        flex-direction: column;
+    }
+
+        .quiz-actions button {
+            width: 100%;
+        }
+}
+
+/* =========================
+   QUIZ PROGRESS & RESULT (REMAINING QUIZ STYLES)
+   ========================= */
+
+.drank-quiz-progress {
+    width: 100%;
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.drank-quiz-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-orange), var(--color-darkred));
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+.drank-quiz-result {
+    font-size: 1.3rem;
+    color: var(--color-darkred);
+    font-family: 'Anton', Arial, sans-serif;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+@media (max-width: 700px) {
+    .drank-quiz-container {
+        max-width: 98vw;
+        padding: 1.2rem 0.5rem;
+    }
+
+    .drank-quiz-title {
+        font-size: 1.5rem;
+    }
+
+    .drank-quiz-question {
+        font-size: 1.1rem;
+    }
 }

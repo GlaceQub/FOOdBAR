@@ -1,0 +1,212 @@
+﻿@using Restaurant.ViewModels.Quiz
+@model QuizGerechtViewModel
+
+@{
+    int currentQuestion = Model.CurrentQuestion;
+    int total = QuizGerechtViewModel.Vragen.Count;
+
+    var propNames = new[]
+    {
+        "IsZoet", "IsZout", "IsBitter", "IsFris", "IsPikant",
+        "IsWarm", "IsKoud", "IsLicht", "IsZwaar",
+        "IsRomig", "IsFruitig", "IsKruidig", "IsExotisch"
+    };
+}
+
+<div class="drank-quiz-container">
+    <h2 class="drank-quiz-title">Quiz: Vind jouw ideale gerecht</h2>
+
+    <div class="drank-quiz-progress" aria-hidden="true">
+        <div class="drank-quiz-progress-bar" style="width:@(Math.Round(((double)currentQuestion / Math.Max(1, total - 1)) * 100))%"></div>
+    </div>
+
+    <form asp-action="Gerecht" method="post" novalidate>
+        <input type="hidden" asp-for="CurrentQuestion" />
+
+        @for (int i = 0; i < propNames.Length; i++)
+        {
+            if (i == currentQuestion) { continue; }
+            var name = propNames[i];
+            var prop = typeof(QuizGerechtViewModel).GetProperty(name);
+            var value = prop?.GetValue(Model) ?? "";
+            <input type="hidden" name="@name" value="@(value)" />
+        }
+
+        <div class="drank-quiz-question" role="group" aria-labelledby="quiz-question">
+            @if (currentQuestion >= 0 && currentQuestion < total)
+            {
+                <label id="quiz-question" class="drank-quiz-title">@QuizGerechtViewModel.Vragen[currentQuestion]</label>
+
+                <div class="drank-quiz-options" role="radiogroup" aria-labelledby="quiz-question">
+                    @switch (currentQuestion)
+                    {
+                        case 0:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZoet" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZoet" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZoet" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 1:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZout" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZout" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZout" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 2:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsBitter" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsBitter" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsBitter" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 3:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsFris" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsFris" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsFris" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 4:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsPikant" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsPikant" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsPikant" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 5:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsWarm" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsWarm" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsWarm" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 6:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsKoud" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsKoud" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsKoud" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 7:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsLicht" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsLicht" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsLicht" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 8:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZwaar" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZwaar" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsZwaar" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 9:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsRomig" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsRomig" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsRomig" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 10:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsFruitig" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsFruitig" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsFruitig" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 11:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsKruidig" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsKruidig" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsKruidig" value="2" /> Heel graag
+                            </label>
+                            break;
+                        case 12:
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsExotisch" value="0" required /> Niet
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsExotisch" value="1" /> Beetje
+                            </label>
+                            <label class="drank-quiz-option">
+                                <input type="radio" asp-for="IsExotisch" value="2" /> Heel graag
+                            </label>
+                            break;
+                        default:
+                            <p>Onbekende vraag</p>
+                            break;
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="drank-quiz-result">Geen vraag gevonden.</p>
+            }
+        </div>
+
+        <div class="quiz-actions">
+            <button type="submit" name="submit" value="back" class="btn-back" @(currentQuestion == 0 ? "disabled" : "") aria-disabled="@(currentQuestion == 0 ? "true" : "false")">Terug</button>
+            <button type="submit" name="submit" value="next" class="btn-next">
+                @(currentQuestion < total - 1 ? "Volgende" : "Bekijk mijn match")
+            </button>
+        </div>
+    </form>
+
+    @if (ViewBag.BestMatch != null)
+    {
+        <div class="drank-quiz-result">
+            <h3>Jouw beste match: @ViewBag.BestMatch</h3>
+        </div>
+    }
+</div>
