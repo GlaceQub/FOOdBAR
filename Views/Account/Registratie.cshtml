@@ -11,11 +11,14 @@
     }
 </style>
 
-<div class="container d-flex justify-content-center" style="margin-top: 60px;">
+<div class="container d-flex justify-content-center mt-3">
     <div class="col-md-8">
         <h2 class="mb-4 text-center">Registratie</h2>
 
-        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+        }
 
         <form asp-action="Registratie" method="post">
             <div class="row">
@@ -87,7 +90,7 @@
                 <span class="text-muted small">Velden gemarkeerd met <span class="text-danger">*</span> zijn verplicht.</span>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">Volgende</button>
+            <button type="submit" class="btn btn-custom-primary w-100">Volgende</button>
         </form>
     </div>
 </div>
