@@ -9,42 +9,52 @@ namespace Restaurant.Data
         {
             try
             {
-                // Roles aanmaken als deze nog niet bestaan
-                if (!await roleManager.RoleExistsAsync("Eigenaar"))
-                    await roleManager.CreateAsync(new IdentityRole("Eigenaar"));
-                if (!await roleManager.RoleExistsAsync("Klant"))
-                    await roleManager.CreateAsync(new IdentityRole("Klant"));
-
-                // Admin gebruiker aanmaken als deze nog niet bestaat
-                var adminEmail = "admin@foodbar.be";
-                var adminUser = await userManager.FindByEmailAsync(adminEmail);
-                if (adminUser == null)
+                // Define all roles and ensure they exist
+                var roles = new[] { "Eigenaar", "Klant", "Zaalverantwoordelijke", "Ober", "Kok" };
+                foreach (var role in roles)
                 {
-                    var defaultUser = new CustomUser
-                    {
-                        UserName = adminEmail,
-                        Email = adminEmail,
-                        EmailConfirmed = true,
-                        LandId = 1,
-                        Actief = true,
-                    };
-                    var result = await userManager.CreateAsync(defaultUser, "F00d.B4r");
-                    if (!result.Succeeded)
-                        throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
-                    adminUser = defaultUser;
+                    if (!await roleManager.RoleExistsAsync(role))
+                        await roleManager.CreateAsync(new IdentityRole(role));
                 }
-                if (!await userManager.IsInRoleAsync(adminUser, "Eigenaar"))
-                    await userManager.AddToRoleAsync(adminUser, "Eigenaar");
 
-                // Ken de rol "Klant" toe aan alle andere gebruikers zonder rol
+                // Define all seed users with their roles
+                var seedUsers = new[]
+                {
+                    new { Email = "admin@foodbar.be", Role = "Eigenaar" },
+                    new { Email = "zv@foodbar.be", Role = "Zaalverantwoordelijke" },
+                    new { Email = "ober@foodbar.be", Role = "Ober" },
+                    new { Email = "kok@foodbar.be", Role = "Kok" },
+                    new { Email = "klant@foodbar.be", Role = "Klant" },
+                };
+
+                // Create or update each seed user and assign their role
+                foreach (var su in seedUsers)
+                {
+                    var user = await userManager.FindByEmailAsync(su.Email);
+                    if (user == null)
+                    {
+                        user = new CustomUser
+                        {
+                            UserName = su.Email,
+                            Email = su.Email,
+                            EmailConfirmed = true,
+                            LandId = 1,
+                            Actief = true,
+                        };
+                        var result = await userManager.CreateAsync(user, "F00d.B4r");
+                        if (!result.Succeeded)
+                            throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
+                    }
+                    if (!await userManager.IsInRoleAsync(user, su.Role))
+                        await userManager.AddToRoleAsync(user, su.Role);
+                }
+
+                // Assign "Klant" role to all users who have no roles
                 var allUsers = userManager.Users.ToList();
                 foreach (var user in allUsers)
                 {
-                    if (user.Email == adminEmail)
-                        continue; // Overgeslagen admin, al afgehandeld
-
-                    var roles = await userManager.GetRolesAsync(user);
-                    if (roles == null || roles.Count == 0)
+                    var userRoles = await userManager.GetRolesAsync(user);
+                    if (userRoles == null || userRoles.Count == 0)
                     {
                         await userManager.AddToRoleAsync(user, "Klant");
                     }

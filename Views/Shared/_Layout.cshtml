@@ -102,9 +102,10 @@
                             {
                                 if (Context.Request.Path.StartsWithSegments("/Account/Dashboard", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    <form asp-controller="Account" asp-action="Logout" method="post">
-                                        <button type="submit" class="nav-link btn btn-link">Logout</button>
+                                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display:none;">
+                                        @Html.AntiForgeryToken()
                                     </form>
+                                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">Logout</a>
                                 }
                                 else
                                 {

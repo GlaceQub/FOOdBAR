@@ -3,7 +3,8 @@
     ViewData["Title"] = "Tafels toewijzen";
 }
 
-<h2>Tafels toewijzen</h2>
+<div class="mt-3">
+<h1>Tafels toewijzen</h1>
 @if (TempData["Message"] != null)
 {
     <div class="alert alert-success">@TempData["Message"]</div>
@@ -22,8 +23,9 @@
                         <option value="@tafel.Id">Tafel @tafel.TafelNummer</option>
                     }
                 </select>
-                <button type="submit" class="btn btn-primary ms-2">Toewijzen</button>
+                <button type="submit" class="btn btn-custom-primary ms-2">Toewijzen</button>
             </form>
         </div>
     </div>
 }
+</div>

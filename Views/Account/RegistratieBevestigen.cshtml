@@ -4,9 +4,9 @@
     ViewData["Title"] = "Registratie Bevestigen";
 }
 
-<div class="container d-flex justify-content-center" style="margin-top: 60px;">
+<div class="container d-flex justify-content-center mt-3">
     <div class="col-md-8">
-        <h2 class="mb-4 text-center">Bevestig uw gegevens</h2>
+        <h1 class="mb-4 text-center">Bevestig uw gegevens</h1>
         <form asp-action="RegistratieBevestigen" method="post">
             <dl class="row">
                 <dt class="col-sm-4">E-mailadres</dt>
@@ -36,8 +36,8 @@
             <input type="hidden" asp-for="Land" />
             <input type="hidden" asp-for="Password" />
             <input type="hidden" asp-for="ConfirmPassword" />
-            <button type="submit" class="btn btn-primary w-100">Account aanmaken</button>
-            <button type="submit" name="terug" value="true" formaction="/Account/Registratie?terug=true" class="btn btn-dark w-100 mt-2">Terug</button>
+            <button type="submit" class="btn btn-custom-primary w-100">Account aanmaken</button>
+            <button type="submit" name="terug" value="true" formaction="/Account/Registratie?terug=true" class="btn btn-custom-secondary w-100 mt-2">Terug</button>
         </form>
     </div>
 </div>

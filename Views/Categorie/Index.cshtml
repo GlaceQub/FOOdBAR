@@ -3,43 +3,46 @@
     ViewData["Title"] = "Categorieën";
 }
 
-<h1 class="mb-4">Categorieën</h1>
+<div class="mt-3">
+    <h1 class="mb-4">Categorieën</h1>
 
-<p>
-<a asp-action="Create" class="btn btn-custom-primary mb-3">Nieuwe Categorie aanmaken</a>
-</p>
+    <p>
+        <a asp-action="Create" class="btn btn-custom-primary mb-3">Nieuwe Categorie aanmaken</a>
+    </p>
 
-<table class="table tafel-table align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>Naam</th>
-            <th>Type</th>
-            <th>Actief</th>
-            <th>Acties</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var c in Model)
-        {
+    <table class="table tafel-table align-middle">
+        <thead class="table-dark">
             <tr>
-                <td>@c.Naam</td>
-                <td>@c.Type?.Naam</td>
-                <td>
-                    @if (c.Actief)
-                    {
-                        <span class="badge bg-custom-success">Ja</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Nee</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-warning btn-sm">Wijzigen</a>
-                    <form asp-action="Delete" asp-route-id="@c.Id" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze categorie wilt verwijderen?');">Verwijderen</button>
-                    </form>
-                </td>
+                <th>Naam</th>
+                <th>Type</th>
+                <th>Actief</th>
+                <th>Acties</th>
             </tr>
-        }
-    </tbody>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.Naam</td>
+                    <td>@c.Type?.Naam</td>
+                    <td>
+                        @if (c.Actief)
+                        {
+                            <span class="badge bg-custom-success">Ja</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Nee</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-warning btn-sm">Bewerken</a>
+                        <form asp-action="Delete" asp-route-id="@c.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze categorie wilt verwijderen?');">Verwijderen</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
