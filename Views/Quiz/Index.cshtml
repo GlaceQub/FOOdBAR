@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Quiz Start";
+}
+
+<div style="display:flex; justify-content:center; padding:3rem 1rem;">
+    <div class="tafel-form-container" role="main" aria-labelledby="quiz-start-title" style="text-align:center;">
+        <h2 id="quiz-start-title" style="font-family:'Anton', Arial, sans-serif; color:var(--color-darkred); margin:0 0 0.5rem 0;">
+            Kies je quiz
+        </h2>
+
+        <p style="color:var(--color-darkgray); font-size:1rem; margin:0 0 1.5rem 0;">
+            Beantwoord een paar korte vragen en wij zoeken een gerecht of drankje dat bij je past.
+        </p>
+
+        <div style="display:flex; gap:1rem; justify-content:center; margin-top:1.25rem; flex-wrap:wrap;">
+            <a asp-action="Gerecht" class="btn-custom-primary" style="min-width:180px; text-align:center;">
+                Gerechten Quiz
+            </a>
+
+            <a asp-action="Drank" class="btn-custom-secondary" style="min-width:180px; text-align:center;">
+                Dranken Quiz
+            </a>
+        </div>
+
+        <hr style="border:0; height:1px; background:#f0eae0; margin:1.75rem 0;" />
+
+        <p style="color:var(--color-darkgray); font-size:0.95rem; margin:0;">
+            Duurt minder dan 2 minuten — je kunt altijd teruggaan en je antwoorden wijzigen.
+        </p>
+    </div>
+</div>

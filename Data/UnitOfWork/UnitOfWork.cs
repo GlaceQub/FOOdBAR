@@ -12,6 +12,7 @@
         public ICategorieTypeRepository CategorieTypen { get; }
         public IStatusRepository Statussen { get; }
         public IReservatieRepository Reservaties { get; }
+        public IQuizRepository QuizEigenschappen { get; }
         public RestaurantContext RestaurantContext => _context;
 
         public UnitOfWork(RestaurantContext context)
@@ -27,6 +28,7 @@
             Statussen = new StatusRepository(_context);
             Reservaties = new ReservatieRepository(_context);
             Reservaties = new ReservatieRepository(_context);
+            QuizEigenschappen = new QuizRepository(_context);
         }
 
         public int Save()

@@ -28,7 +28,10 @@
 
         // Reservatie related
         IReservatieRepository Reservaties { get; }
-        
+
+        // Quiz related
+        IQuizRepository QuizEigenschappen { get; }
+
         RestaurantContext RestaurantContext { get; }
 
         int Save();
