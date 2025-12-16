@@ -1,9 +1,8 @@
 ﻿USE Restaurant;
 GO
 
--- QuizEigenschappen Data Seed Script
 INSERT INTO QuizEigenschappen
-(ProductId, IsZoet, IsZout, IsBitter, IsFris, IsPikant, IsAlcoholisch, IsWarm, IsKoud, IsLicht, IsZwaar, IsRomig, IsFruitig, IsKruidig, IsExotisch)
+(ProductId, Zoet, Zout, Bitter, Fris, Pikant, Alcoholisch, Warm, Koud, Licht, Zwaar, Romig, Fruitig, Kruidig, Exotisch)
 VALUES
 -- Warme Dranken
 (1, 0, 0, 1, 0, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0), -- Espresso
@@ -26,7 +25,6 @@ VALUES
 -- Voorgerechten
 (11, 0, 1, 0, 1, 0, 0, 2, 0, 1, 1, 1, 0, 1, 0), -- Carpaccio
 (12, 1, 1, 0, 1, 0, 0, 2, 0, 1, 1, 1, 0, 1, 0), -- Garnaalkroketjes
-(13, 0, 1, 0, 2, 0, 0, 2, 0, 1, 0, 0, 1, 1, 0), -- Soep van de dag
 
 -- Hoofdgerechten
 (14, 0, 2, 0, 0, 0, 0, 2, 0, 0, 2, 0, 0, 1, 0), -- Steak met frietjes

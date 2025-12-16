@@ -6,20 +6,20 @@
         public int ProductId { get; set; }
 
         // Smaak- en producteigenschappen (0 = niet, 1 = beetje, 2 = veel)
-        public int IsZoet { get; set; }
-        public int IsZout { get; set; }
-        public int IsBitter { get; set; }
-        public int IsFris { get; set; }
-        public int IsPikant { get; set; }
-        public int IsAlcoholisch { get; set; }
-        public int IsWarm { get; set; }
-        public int IsKoud { get; set; }
-        public int IsLicht { get; set; }
-        public int IsZwaar { get; set; }
-        public int IsRomig { get; set; }
-        public int IsFruitig { get; set; }
-        public int IsKruidig { get; set; }
-        public int IsExotisch { get; set; }
+        public int Zoet { get; set; }
+        public int Zout { get; set; }
+        public int Bitter { get; set; }
+        public int Fris { get; set; }
+        public int Pikant { get; set; }
+        public int Alcoholisch { get; set; }
+        public int Warm { get; set; }
+        public int Koud { get; set; }
+        public int Licht { get; set; }
+        public int Zwaar { get; set; }
+        public int Romig { get; set; }
+        public int Fruitig { get; set; }
+        public int Kruidig { get; set; }
+        public int Exotisch { get; set; }
 
         // Navigatie naar het bijbehorende product
         public Product Product { get; set; }

@@ -71,19 +71,19 @@ namespace Restaurant.Controllers
                 {
                     Product = q.Product,
                     Score =
-                        Math.Abs(q.IsZoet - model.IsZoet) +
-                        Math.Abs(q.IsZout - model.IsZout) +
-                        Math.Abs(q.IsBitter - model.IsBitter) +
-                        Math.Abs(q.IsFris - model.IsFris) +
-                        Math.Abs(q.IsPikant - model.IsPikant) +
-                        Math.Abs(q.IsWarm - model.IsWarm) +
-                        Math.Abs(q.IsKoud - model.IsKoud) +
-                        Math.Abs(q.IsLicht - model.IsLicht) +
-                        Math.Abs(q.IsZwaar - model.IsZwaar) +
-                        Math.Abs(q.IsRomig - model.IsRomig) +
-                        Math.Abs(q.IsFruitig - model.IsFruitig) +
-                        Math.Abs(q.IsKruidig - model.IsKruidig) +
-                        Math.Abs(q.IsExotisch - model.IsExotisch)
+                        Math.Abs(q.Zoet - model.Zoet) +
+                        Math.Abs(q.Zout - model.Zout) +
+                        Math.Abs(q.Bitter - model.Bitter) +
+                        Math.Abs(q.Fris - model.Fris) +
+                        Math.Abs(q.Pikant - model.Pikant) +
+                        Math.Abs(q.Warm - model.Warm) +
+                        Math.Abs(q.Koud - model.Koud) +
+                        Math.Abs(q.Licht - model.Licht) +
+                        Math.Abs(q.Zwaar - model.Zwaar) +
+                        Math.Abs(q.Romig - model.Romig) +
+                        Math.Abs(q.Fruitig - model.Fruitig) +
+                        Math.Abs(q.Kruidig - model.Kruidig) +
+                        Math.Abs(q.Exotisch - model.Exotisch)
                 })
                 .OrderBy(x => x.Score)
                 .FirstOrDefault();
@@ -132,15 +132,15 @@ namespace Restaurant.Controllers
                 {
                     Product = q.Product,
                     Score =
-                        Math.Abs(q.IsZoet - model.IsZoet) +
-                        Math.Abs(q.IsBitter - model.IsBitter) +
-                        Math.Abs(q.IsFris - model.IsFris) +
-                        Math.Abs(q.IsAlcoholisch - model.IsAlcoholisch) +
-                        Math.Abs(q.IsWarm - model.IsWarm) +
-                        Math.Abs(q.IsKoud - model.IsKoud) +
-                        Math.Abs(q.IsFruitig - model.IsFruitig) +
-                        Math.Abs(q.IsKruidig - model.IsKruidig) +
-                        Math.Abs(q.IsExotisch - model.IsExotisch)
+                        Math.Abs(q.Zoet - model.Zoet) +
+                        Math.Abs(q.Bitter - model.Bitter) +
+                        Math.Abs(q.Fris - model.Fris) +
+                        Math.Abs(q.Alcoholisch - model.Alcoholisch) +
+                        Math.Abs(q.Warm - model.Warm) +
+                        Math.Abs(q.Koud - model.Koud) +
+                        Math.Abs(q.Fruitig - model.Fruitig) +
+                        Math.Abs(q.Kruidig - model.Kruidig) +
+                        Math.Abs(q.Exotisch - model.Exotisch)
                 })
                 .OrderBy(x => x.Score)
                 .FirstOrDefault();

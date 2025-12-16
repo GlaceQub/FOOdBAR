@@ -4,15 +4,15 @@
     {
         public int CurrentQuestion { get; set; } = 0;
 
-        public int IsZoet { get; set; }
-        public int IsBitter { get; set; }
-        public int IsFris { get; set; }
-        public int IsAlcoholisch { get; set; }
-        public int IsWarm { get; set; }
-        public int IsKoud { get; set; }
-        public int IsFruitig { get; set; }
-        public int IsExotisch { get; set; }
-        public int IsKruidig { get; set; }
+        public int Zoet { get; set; }
+        public int Bitter { get; set; }
+        public int Fris { get; set; }
+        public int Alcoholisch { get; set; }
+        public int Warm { get; set; }
+        public int Koud { get; set; }
+        public int Fruitig { get; set; }
+        public int Exotisch { get; set; }
+        public int Kruidig { get; set; }
 
         // Quiz vragen — één vraag per eigenschap (nu 9 vragen)
         public static readonly List<string> Vragen = new()
