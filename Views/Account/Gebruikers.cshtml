@@ -52,7 +52,7 @@
                         }
                     </td>
                     <td>
-                        <a asp-controller="Account" asp-action="Edit" asp-route-id="@userVM.User.Id" class="btn btn-warning btn-sm">Wijzigen</a>
+                        <a asp-controller="Account" asp-action="Edit" asp-route-id="@userVM.User.Id" class="btn btn-warning btn-sm">Bewerken</a>
                         <form asp-controller="Account" asp-action="Delete" asp-route-id="@userVM.User.Id" method="post" style="display:inline;">
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze gebruiker wilt verwijderen?');">Verwijderen</button>
                         </form>

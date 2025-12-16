@@ -135,16 +135,6 @@ namespace Restaurant.Controllers
         }
 
         [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
-        {
-            _unitOfWork.Reservaties.Delete(id);
-            _unitOfWork.Save();
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Edit(int id)
         {
