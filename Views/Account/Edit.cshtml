@@ -65,6 +65,7 @@
                         <label class="form-check-label" for="role_@role.Value">@role.Text</label>
                     </div>
                 }
+                @Html.ValidationMessageFor(m => m.Rollen, "", new { @class = "text-danger" })
             </div>
         </div>
 

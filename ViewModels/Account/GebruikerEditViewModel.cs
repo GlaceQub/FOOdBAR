@@ -6,7 +6,11 @@
         public string Id { get; set; } = string.Empty;
         public string? Voornaam { get; set; }
         public string? Achternaam { get; set; }
-        [Required]
+
+        [EmailAddress(ErrorMessage = "Ongeldig e-mailadres")]
+        [Required(ErrorMessage = "E-mailadres is verplicht!")]
+        [DataType(DataType.EmailAddress)]
+        [Display(Name = "E-mailadres")]
         public string? Email { get; set; }
         public string? Adres { get; set; }
         public string? Huisnummer { get; set; }

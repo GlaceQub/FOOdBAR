@@ -285,6 +285,20 @@ namespace Restaurant.Controllers
             var rolesToAdd = vm.Rollen.Except(currentRoles);
             var rolesToRemove = currentRoles.Except(vm.Rollen);
 
+            // Prevent removing the last "Eigenaar"
+            if (rolesToRemove.Contains("Eigenaar"))
+            {
+                var admins = await _userManager.GetUsersInRoleAsync("Eigenaar");
+                if (admins.Count == 1 && admins[0].Id == gebruiker.Id)
+                {
+                    ModelState.AddModelError(nameof(vm.Rollen), "Er moet altijd minstens één gebruiker met de rol 'Eigenaar' zijn.");
+                    // Repopulate dropdowns for the view
+                    vm.AllRollen = await GetRollenSelectListAsync();
+                    vm.Landen = await GetLandenSelectListAsync();
+                    return View(vm);
+                }
+            }
+
             if (rolesToRemove.Any())
                 await _userManager.RemoveFromRolesAsync(gebruiker, rolesToRemove);
 
@@ -334,8 +348,32 @@ namespace Restaurant.Controllers
             if (roles.Any())
                 await _userManager.RemoveFromRolesAsync(gebruiker, roles);
 
-            gebruiker.UserName = "Verwijderd";
-            // Set all nullable fields to null
+            // Generate a unique "Verwijderd_X" name (never just "Verwijderd")
+            var allUsers = _userManager.Users.ToList();
+            var verwijderdUsers = allUsers
+                .Where(u => u.UserName != null && u.UserName.ToLower().StartsWith("verwijderd"))
+                .Select(u => u.UserName)
+                .ToList();
+
+            int maxNum = 0;
+            foreach (var name in verwijderdUsers)
+            {
+                var parts = name.Split('_');
+                if (parts.Length == 2 && int.TryParse(parts[1], out int n))
+                {
+                    if (n > maxNum) maxNum = n;
+                }
+            }
+            // Always use Verwijderd_1 or higher, never plain Verwijderd
+            var newName = $"Verwijderd_{maxNum + 1}";
+            while (allUsers.Any(u => u.UserName != null && u.UserName.Equals(newName, StringComparison.OrdinalIgnoreCase)))
+            {
+                maxNum++;
+                newName = $"Verwijderd_{maxNum + 1}";
+            }
+
+            gebruiker.UserName = newName;
+            gebruiker.Email = null; // Or $"{newName}@verwijderd.local" if you want a unique email
             gebruiker.Voornaam = null;
             gebruiker.Achternaam = null;
             gebruiker.Adres = null;
@@ -343,7 +381,6 @@ namespace Restaurant.Controllers
             gebruiker.Postcode = null;
             gebruiker.Gemeente = null;
             gebruiker.NormalizedUserName = null;
-            gebruiker.Email = null;
             gebruiker.NormalizedEmail = null;
             gebruiker.PasswordHash = null;
             gebruiker.SecurityStamp = Guid.NewGuid().ToString();
