@@ -1,0 +1,69 @@
+﻿@model IEnumerable<Restaurant.ViewModels.Account.GebruikerViewModel>
+@{
+    ViewData["Title"] = "Gebruikers";
+    var volledigeNaam = string.Empty;
+}
+
+<h1 class="mb-4">Gebruikers</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-custom-primary mb-3">Nieuwe Gebruiker aanmaken</a>
+</p>
+
+<table class="table tafel-table align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Email</th>
+            <th>Naam</th>
+            <th>Actief</th>
+            <th>Rollen</th>
+            <th>Acties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var userVM in Model)
+        {
+            { volledigeNaam = userVM.User.VolledigeNaam.Trim().Equals(string.Empty) ? "Geen naam opgegeven" : userVM.User.VolledigeNaam; }
+            <tr>
+                <td>@userVM.User.Email</td>
+                <td>@volledigeNaam</td>
+                <td>
+                    @if (userVM.User.Actief)
+                    {
+                        <span class="badge bg-custom-success">Ja</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Nee</span>
+                    }
+                </td>
+                <td>
+                    @if (userVM.Roles != null && userVM.Roles.Any())
+                    {
+                        @foreach (var rol in userVM.Roles)
+                        {
+                            <span class="badge bg-custom-success text-dark me-1">@rol</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">Geen rollen toegewezen</span>
+                    }
+                </td>
+                <td>
+                    <a asp-controller="Account" asp-action="Edit" asp-route-id="@userVM.User.Id" class="btn btn-warning btn-sm">Wijzigen</a>
+                    <form asp-controller="Account" asp-action="Delete" asp-route-id="@userVM.User.Id" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze gebruiker wilt verwijderen?');">Verwijderen</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}

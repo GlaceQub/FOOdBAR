@@ -11,7 +11,6 @@
         public int TypeId { get; set; }
 
         public bool Actief { get; set; }
-
         // Voor de dropdown
         public IEnumerable<CategorieType>? TypeList { get; set; }
     }

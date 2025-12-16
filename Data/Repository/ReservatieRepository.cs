@@ -63,6 +63,17 @@ namespace Restaurant.Data.Repository
                 .ToList() ?? new List<Reservatie>();
         }
 
+        // Haal reservaties op via klantId
+        public IEnumerable<Reservatie> GetByKlantId(string klantId)
+        {
+            return _context.Reservaties
+                .Include(r => r.Tafellijsten)
+                    .ThenInclude(tl => tl.Tafel)
+                .Include(r => r.Tijdslot)
+                .Where(r => r.KlantId == klantId)
+                .ToList();
+        }
+
         // Haal een reservatie op via id
         public Reservatie? GetById(int id)
         {
@@ -134,14 +145,6 @@ namespace Restaurant.Data.Repository
                     && t.AantalPersonen >= aantalPersonen
                     && !bezetteTafelIds.Contains(t.Id))
                 .ToList();
-        }
-
-        // Koppel een tafel aan een reservatie
-        public void KoppelTafelAanReservatie(int reservatieId, int tafelId)
-        {
-            var koppeling = new TafelLijst { ReservatieId = reservatieId, TafelId = tafelId };
-            _context.TafelLijsten.Add(koppeling);
-            _context.SaveChanges();
         }
 
         // Haal een tafel op via id

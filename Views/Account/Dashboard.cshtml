@@ -19,10 +19,6 @@
                 Tafels toewijzen
             </a>
 
-            <a asp-controller="Reservation" asp-action="Index" class="btn btn-custom-primary mt-3 ms-2">
-                Reservaties bekijken
-            </a>
-
             <a asp-controller="Categorie" asp-action="Index" class="btn btn-custom-primary mt-3 ms-2">
                 Categorieën beheren
             </a>
@@ -35,6 +31,19 @@
                 Dranken beheren
             </a>
 
+        }
+        @if (User.IsInRole("Eigenaar") || User.IsInRole("Zaalverantwoordelijke") || User.IsInRole("Klant"))
+        {
+            <a asp-controller="Reservation" asp-action="Index" class="btn btn-custom-primary mt-3 ms-2">
+                Reservaties bekijken
+            </a>
+        }
+
+        @if (User.IsInRole("Eigenaar"))
+        {
+            <a asp-controller="Account" asp-action="Gebruikers" class="btn btn-custom-primary mt-3 ms-2">
+                Gebruikers beheren
+            </a>
         }
     }
 </div>

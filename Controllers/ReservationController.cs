@@ -46,6 +46,7 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ReservationViewModel model)
         {
+
             model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                 .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
                 .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
@@ -57,6 +58,15 @@ namespace Restaurant.Controllers
 
             if (!ModelState.IsValid)
             {
+                model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList();
+                model.DinerTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList();
+
                 return View(model);
             }
 
@@ -104,11 +114,18 @@ namespace Restaurant.Controllers
             return View(reservatie);
         }
 
-        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar, Klant")]
         [HttpGet]
         public IActionResult Index(DateTime? datum)
         {
-            var reservaties = _unitOfWork.Reservaties.GetAll();
+            var reservaties = Enumerable.Empty<Reservatie>();
+            if (User.IsInRole("Klant"))
+            {
+                var klantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                reservaties = _unitOfWork.Reservaties.GetByKlantId(klantId);
+            }
+            else
+                reservaties = _unitOfWork.Reservaties.GetAll();
 
             DateTime filterDatum = datum ?? DateTime.Today;
             reservaties = reservaties.Where(r => r.Datum.HasValue && r.Datum.Value.Date == filterDatum.Date);
@@ -215,7 +232,6 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ToewijsTafel(int reservatieId, int tafelId)
         {
-            _unitOfWork.Reservaties.KoppelTafelAanReservatie(reservatieId, tafelId);
 
             var tafel = _unitOfWork.Reservaties.GetTafelById(tafelId);
             if (tafel != null)
