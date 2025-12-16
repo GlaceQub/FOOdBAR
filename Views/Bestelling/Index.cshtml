@@ -7,90 +7,92 @@
 }
 
 @* Page Title *@
-<h1 class="mb-4">@ViewData["Title"]</h1>
+<div class="mt-3">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
 
-@* Status Filters *@
-<div class="mb-3" id="status-filter-pills">
-    <span class="fw-bold me-2">Getoonde statussen:</span>
-    @foreach (var status in statusList)
-    {
-        var statusColor = statusColors != null && statusColors.ContainsKey(status.Id)
-        ? statusColors[status.Id]
-        : "light";
-        var ariaPressed = "true";
-        if (status.Naam == "Geserveerd")
+    @* Status Filters *@
+    <div class="mb-3" id="status-filter-pills">
+        <span class="fw-bold me-2">Getoonde statussen:</span>
+        @foreach (var status in statusList)
         {
-            statusColor = "outline-" + statusColor;
-            ariaPressed = "false";
+            var statusColor = statusColors != null && statusColors.ContainsKey(status.Id)
+            ? statusColors[status.Id]
+            : "light";
+            var ariaPressed = "true";
+            if (status.Naam == "Geserveerd")
+            {
+                statusColor = "outline-" + statusColor;
+                ariaPressed = "false";
+            }
+            <button type="button"
+                    class="status-filter-pill btn btn-@statusColor me-2 rounded-pill"
+                    data-status-id="@status.Id"
+                    aria-pressed="@ariaPressed">
+                @status.Naam
+            </button>
         }
-        <button type="button"
-                class="status-filter-pill btn btn-@statusColor me-2 rounded-pill"
-                data-status-id="@status.Id"
-                aria-pressed="@ariaPressed">
-            @status.Naam
-        </button>
-    }
-</div>
-
-@* Headers *@
-<div class="list-group-item rounded-3 shadow-sm mb-3 bg-secondary-subtle">
-    <div class="row fw-bold text-secondary py-2 px-3">
-        <div class="col-1 text-start">Reservatie</div>
-        <div class="col-1 text-start">Tijdstip</div>
-        <div class="col-1 text-start">Type</div>
-        <div class="col-2 text-start">Product</div>
-        <div class="col-2 text-start">Allergenen</div>
-        <div class="col-2 text-start">Opmerkingen</div>
-        <div class="col-2 text-start">Status</div>
-        <div class="col-1"></div>
     </div>
-</div>
 
-@* Bestellingen *@
-@foreach (var bestelling in bestellingen)
-{
-    var statusColor = statusColors != null && statusColors.ContainsKey(bestelling.Status.Id)
+    @* Headers *@
+    <div class="list-group-item rounded-3 shadow-sm mb-3 bg-secondary-subtle">
+        <div class="row fw-bold text-secondary py-2 px-3">
+            <div class="col-1 text-start">Reservatie</div>
+            <div class="col-1 text-start">Tijdstip</div>
+            <div class="col-1 text-start">Type</div>
+            <div class="col-2 text-start">Product</div>
+            <div class="col-2 text-start">Allergenen</div>
+            <div class="col-2 text-start">Opmerkingen</div>
+            <div class="col-2 text-start">Status</div>
+            <div class="col-1"></div>
+        </div>
+    </div>
+
+    @* Bestellingen *@
+    @foreach (var bestelling in bestellingen)
+    {
+        var statusColor = statusColors != null && statusColors.ContainsKey(bestelling.Status.Id)
         ? statusColors[bestelling.Status.Id]
         : "light";
-    <div class="list-group-item rounded-3 shadow-sm mb-3 list-group-item-@statusColor bestelling-row" data-status-id="@bestelling.Status.Id">
-        <div class="row align-items-center py-2 px-3">
-            <div class="col-1 text-start">@bestelling.ReservatieId</div>
-            <div class="col-1 text-start">@bestelling.TijdstipBestelling?.ToString("HH:mm dd/M")</div>
-            <div class="col-1 text-start">
-                @if (bestelling.Product?.Categorie?.Type?.Naam == "Dranken")
-                {
-                    <i class="bi bi-cup-straw fs-3" title="Drank" aria-label="Drank"></i>
-                }
-                else
-                {
-                    <i class="bi bi-egg-fill fs-3" title="Gerecht" aria-label="Gerecht"></i>
-                }
-            </div>
-            <div class="col-2 text-start">@bestelling.Product.Naam</div>
-            <div class="col-2 text-start">@bestelling.Product.AllergenenInfo</div>
-            <div class="col-2 text-start">@bestelling.Opmerking</div>
-            <div class="col-2">
-                <form method="post" asp-action="UpdateStatus" asp-route-id="@bestelling.Id" class="status-form d-inline" id="status-form-@bestelling.Id">
-                    @Html.AntiForgeryToken()
-                    <select name="StatusId" class="form-select form-select-sm w-100 d-inline-block status-dropdown" data-bestelling-id="@bestelling.Id">
-                        @foreach (var status in statusList)
-                        {
-                            <option value="@status.Id" selected="@(bestelling.Status.Id == status.Id ? "selected" : null)">
-                                @status.Naam
-                            </option>
-                        }
-                    </select>
-                </form>
-            </div>
-            <div class="col-1">
-                @* <a asp-controller="Bestelling" asp-action="Bewerken" asp-route-id="@bestelling.Id"
+        <div class="list-group-item rounded-3 shadow-sm mb-3 list-group-item-@statusColor bestelling-row" data-status-id="@bestelling.Status.Id">
+            <div class="row align-items-center py-2 px-3">
+                <div class="col-1 text-start">@bestelling.ReservatieId</div>
+                <div class="col-1 text-start">@bestelling.TijdstipBestelling?.ToString("HH:mm dd/M")</div>
+                <div class="col-1 text-start">
+                    @if (bestelling.Product?.Categorie?.Type?.Naam == "Dranken")
+                    {
+                        <i class="bi bi-cup-straw fs-3" title="Drank" aria-label="Drank"></i>
+                    }
+                    else
+                    {
+                        <i class="bi bi-egg-fill fs-3" title="Gerecht" aria-label="Gerecht"></i>
+                    }
+                </div>
+                <div class="col-2 text-start">@bestelling.Product.Naam</div>
+                <div class="col-2 text-start">@bestelling.Product.AllergenenInfo</div>
+                <div class="col-2 text-start">@bestelling.Opmerking</div>
+                <div class="col-2">
+                    <form method="post" asp-action="UpdateStatus" asp-route-id="@bestelling.Id" class="status-form d-inline" id="status-form-@bestelling.Id">
+                        @Html.AntiForgeryToken()
+                        <select name="StatusId" class="form-select form-select-sm w-100 d-inline-block status-dropdown" data-bestelling-id="@bestelling.Id">
+                            @foreach (var status in statusList)
+                            {
+                                <option value="@status.Id" selected="@(bestelling.Status.Id == status.Id ? "selected" : null)">
+                                    @status.Naam
+                                </option>
+                            }
+                        </select>
+                    </form>
+                </div>
+                <div class="col-1">
+                    @* <a asp-controller="Bestelling" asp-action="Bewerken" asp-route-id="@bestelling.Id"
                    class="btn btn-link p-0 ms-2" title="Bewerken">
                     <i class="bi bi-pencil-fill text-black"></i>
                 </a> *@
+                </div>
             </div>
         </div>
-    </div>
-}
+    }
+</div>
 
 @* scripts *@
 <script>

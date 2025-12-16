@@ -3,6 +3,7 @@
     ViewData["Title"] = "Reservatie bewerken";
 }
 
+<div class="mt-3">
 <h1>Reservatie bewerken</h1>
 
 <form asp-action="Edit" method="post">
@@ -30,7 +31,7 @@
     <button type="submit" class="btn btn-primary">Opslaan</button>
     <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
 </form>
-
+</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
