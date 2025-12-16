@@ -34,30 +34,24 @@ namespace Restaurant.Controllers
         [HttpPost]
         public async Task<IActionResult> Gerecht(QuizGerechtViewModel model)
         {
-            // Welke knop stuurde de gebruiker?
             var action = (Request.Form["submit"].FirstOrDefault() ?? "next").ToLowerInvariant();
 
-            // Als gebruiker op "Terug" klikt, ga één vraag terug zonder validatie
             if (action == "back")
             {
                 model.CurrentQuestion = Math.Max(0, model.CurrentQuestion - 1);
-                ModelState.Clear(); // zodat de view de waarden uit het model gebruikt
+                ModelState.Clear(); 
                 return View(model);
             }
 
-            // "next" knop: valideer het antwoord van de huidige vraag
             if (!ModelState.IsValid)
             {
-                // ModelState bevat validatiefouten (bv. required radio niet gekozen)
                 return View(model);
             }
 
-            // Verwerk/acceptatie van antwoord habituely gebeurt via model-binding (hidden inputs behouden eerdere antwoorden)
             model.CurrentQuestion++;
 
-            ModelState.Clear(); // belangrijk zodat helpers de nieuwe modelwaarden tonen
+            ModelState.Clear(); 
 
-            // Als er nog vragen zijn: toon volgende vraag
             if (model.CurrentQuestion < QuizGerechtViewModel.Vragen.Count)
             {
                 return View(model);
@@ -89,7 +83,6 @@ namespace Restaurant.Controllers
                 .FirstOrDefault();
 
             ViewBag.BestMatch = bestMatch?.Product?.Naam ?? "Geen match gevonden";
-            // Zet CurrentQuestion op Count zodat view resultaat kan tonen
             model.CurrentQuestion = QuizGerechtViewModel.Vragen.Count;
             return View(model);
         }
@@ -112,19 +105,15 @@ namespace Restaurant.Controllers
                 return View(model);
             }
 
-            // Verhoog het vraagnummer in het model
             model.CurrentQuestion++;
 
-            // Belangrijk: clear ModelState zodat Razor de bijgewerkte modelwaarden gebruikt
             ModelState.Clear();
 
-            // Toon volgende vraag als we nog niet klaar zijn
             if (model.CurrentQuestion < QuizDrankViewModel.Vragen.Count)
             {
                 return View(model);
             }
 
-            // Alle vragen beantwoord: bereken de beste match
             var quizEigenschappen = await _unitOfWork.QuizEigenschappen.GetQuizEigenschappenVoorDrankenAsync();
 
             var bestMatch = quizEigenschappen
@@ -147,7 +136,6 @@ namespace Restaurant.Controllers
 
             ViewBag.BestMatch = bestMatch?.Product?.Naam ?? "Geen match gevonden";
 
-            // model.CurrentQuestion is nu >= Count -> view kan resultaat tonen
             return View(model);
         }
     }

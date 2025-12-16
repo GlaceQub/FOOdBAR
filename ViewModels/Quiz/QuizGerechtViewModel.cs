@@ -18,7 +18,7 @@
         public int Kruidig { get; set; }
         public int Exotisch { get; set; }
 
-        // Quiz vragen — nu 14 vragen, één per eigenschap (volgorde = properties)
+        // Quiz vragen — één vraag per eigenschap
         public static readonly List<string> Vragen = new()
         {
             "Hou je van zoete gerechten?",          // IsZoet

@@ -14,7 +14,7 @@
         public int Exotisch { get; set; }
         public int Kruidig { get; set; }
 
-        // Quiz vragen — één vraag per eigenschap (nu 9 vragen)
+        // Quiz vragen — één vraag per eigenschap 
         public static readonly List<string> Vragen = new()
         {
             "Hou je van zoete dranken?",         // IsZoet

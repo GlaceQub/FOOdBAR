@@ -205,8 +205,7 @@
     @if (ViewBag.BestMatch != null)
     {
         <div class="drank-quiz-result">
-            <h3>Jouw beste match: @ViewBag.BestMatch</h3>
-
+            <h3>Jouw beste match:<br />@ViewBag.BestMatch</h3>
             <div class="quiz-actions" style="margin-top:1.25rem;">
                 <a asp-controller="Quiz" asp-action="Gerecht" class="btn-custom-primary" role="button">Opnieuw beginnen</a>
                 <a asp-controller="Home" asp-action="Index" class="btn-custom-secondary" role="button">Naar homepage</a>
