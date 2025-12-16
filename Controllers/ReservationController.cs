@@ -37,6 +37,7 @@ namespace Restaurant.Controllers
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList()
             };
+
             return View(model);
         }
 

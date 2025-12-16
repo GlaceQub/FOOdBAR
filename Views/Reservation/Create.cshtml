@@ -40,7 +40,7 @@
                             @foreach (var slot in Model.LunchTijdsloten)
                             {
                                 <div class="col-6 mb-3">
-                                    <div class="card tijdslot-card" data-id="@slot.Id" tabindex="0" style="cursor:pointer;">
+                                    <div class="card tijdslot-card" data-id="@slot.Id" data-naam="@slot.Naam" tabindex="0" style="cursor:pointer;">
                                         <div class="card-body text-center">
                                             <span>@slot.Naam</span>
                                         </div>
@@ -56,7 +56,7 @@
                             @foreach (var slot in Model.DinerTijdsloten)
                             {
                                 <div class="col-6 mb-3">
-                                    <div class="card tijdslot-card" data-id="@slot.Id" tabindex="0" style="cursor:pointer;">
+                                    <div class="card tijdslot-card" data-id="@slot.Id" data-naam="@slot.Naam" tabindex="0" style="cursor:pointer;">
                                         <div class="card-body text-center">
                                             <span>@slot.Naam</span>
                                         </div>
@@ -85,37 +85,76 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        (function () {
-            if (window.jQuery && jQuery.validator && jQuery.validator.messages) {
-                jQuery.extend(jQuery.validator.messages, {
-                    min: "Datum kan niet in het verleden liggen."
-                });
+        // Helper: parse "tot 12u30" or "tot 19u" from tijdslot string
+        function parseEndTime(naam) {
+            var match = naam.match(/tot\s*(\d{1,2})u(\d{0,2})?/i);
+            if (match) {
+                var hour = parseInt(match[1], 10);
+                var minute = match[2] ? parseInt(match[2], 10) : 0;
+                return { hour: hour, minute: minute };
             }
-        })();
-    </script>
+            return null;
+        }
 
-    <script>
-        // Card selectie logica
-        document.querySelectorAll('.tijdslot-card').forEach(card => {
-            card.addEventListener('click', function () {
-                document.querySelectorAll('.tijdslot-card').forEach(c => c.classList.remove('border-primary', 'shadow'));
-                this.classList.add('border-primary', 'shadow');
-                document.getElementById('TijdSlotId').value = this.getAttribute('data-id');
-            });
-            card.addEventListener('keydown', function (e) {
-                if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    this.click();
+        function updateTijdslotCards() {
+            var dateInput = document.getElementById('Datum');
+            var selectedDate = dateInput ? new Date(dateInput.value) : null;
+            var today = new Date();
+            var isToday = selectedDate &&
+                selectedDate.getFullYear() === today.getFullYear() &&
+                selectedDate.getMonth() === today.getMonth() &&
+                selectedDate.getDate() === today.getDate();
+
+            document.querySelectorAll('.tijdslot-card').forEach(function (card) {
+                var naam = card.getAttribute('data-naam');
+                var endTime = parseEndTime(naam);
+                card.classList.remove('disabled', 'bg-light', 'text-muted');
+                card.style.pointerEvents = '';
+                if (isToday && endTime) {
+                    var slotEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), endTime.hour, endTime.minute);
+                    if (slotEnd <= today) {
+                        card.classList.add('disabled', 'bg-light', 'text-muted');
+                        card.style.pointerEvents = 'none';
+                        // If this card was selected, clear selection
+                        if (document.getElementById('TijdSlotId').value === card.getAttribute('data-id')) {
+                            document.getElementById('TijdSlotId').value = '';
+                        }
+                    }
                 }
             });
-        });
+        }
 
-        // Form validatie: tijdslot moet gekozen zijn (extra UX)
-        document.getElementById('reservationForm').addEventListener('submit', function (e) {
-            if (!document.getElementById('TijdSlotId').value) {
-                e.preventDefault();
-                alert('Kies een tijdslot.');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Card selectie logica
+            document.querySelectorAll('.tijdslot-card').forEach(card => {
+                card.addEventListener('click', function () {
+                    if (this.classList.contains('disabled')) return;
+                    document.querySelectorAll('.tijdslot-card').forEach(c => c.classList.remove('border-primary', 'shadow'));
+                    this.classList.add('border-primary', 'shadow');
+                    document.getElementById('TijdSlotId').value = this.getAttribute('data-id');
+                });
+                card.addEventListener('keydown', function (e) {
+                    if ((e.key === "Enter" || e.key === " ") && !this.classList.contains('disabled')) {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+
+            // Update cards on page load and when date changes
+            updateTijdslotCards();
+            var dateInput = document.getElementById('Datum');
+            if (dateInput) {
+                dateInput.addEventListener('change', updateTijdslotCards);
             }
+
+            // Form validatie: tijdslot moet gekozen zijn (extra UX)
+            document.getElementById('reservationForm').addEventListener('submit', function (e) {
+                if (!document.getElementById('TijdSlotId').value) {
+                    e.preventDefault();
+                    alert('Kies een tijdslot.');
+                }
+            });
         });
     </script>
 }
