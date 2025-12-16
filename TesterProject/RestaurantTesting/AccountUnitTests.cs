@@ -8,14 +8,14 @@ using Moq;
 
 namespace RestaurantTesting
 {
-    public class AccountControllerTests
+    public class AccountUnitTests
     {
         private readonly Mock<UserManager<CustomUser>> _userManagerMock;
         private readonly Mock<SignInManager<CustomUser>> _signInManagerMock;
         private readonly Mock<RoleManager<IdentityRole>> _roleManagerMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
-        public AccountControllerTests()
+        public AccountUnitTests()
         {
             var userStoreMock = new Mock<IUserStore<CustomUser>>();
             _userManagerMock = new Mock<UserManager<CustomUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
@@ -34,7 +34,7 @@ namespace RestaurantTesting
             _unitOfWorkMock = new Mock<IUnitOfWork>();
         }
 
-        [Fact]
+        [Fact, Trait("Category", "Unit")]
         public async Task Login_Post_ReturnsRedirect_WhenLoginSuccessful()
         {
             // Arrange
@@ -60,7 +60,7 @@ namespace RestaurantTesting
             Assert.Equal("Account", redirectResult.ControllerName);
         }
 
-        [Fact]
+        [Fact, Trait("Category", "Unit")]
         public async Task Login_Post_ReturnsView_WhenUserNotFound()
         {
             // Arrange
@@ -83,7 +83,7 @@ namespace RestaurantTesting
             Assert.True(controller.ModelState.ContainsKey("Email"));
         }
 
-        [Fact]
+        [Fact, Trait("Category", "Unit")]
         public async Task Login_Post_ReturnsView_WhenPasswordIncorrect()
         {
             // Arrange
@@ -110,7 +110,7 @@ namespace RestaurantTesting
             Assert.True(controller.ModelState.ContainsKey("Password"));
         }
 
-        [Fact]
+        [Fact, Trait("Category", "Unit")]
         public async Task Login_Post_ReturnsView_WhenUserLockedOut()
         {
             // Arrange
@@ -137,7 +137,7 @@ namespace RestaurantTesting
             Assert.True(controller.ModelState.ContainsKey(""));
         }
 
-        [Fact]
+        [Fact, Trait("Category", "Unit")]
         public async Task Registratie_Post_ReturnsView_WhenModelStateInvalid()
         {
             // Arrange
@@ -161,7 +161,7 @@ namespace RestaurantTesting
             Assert.False(controller.ModelState.IsValid);
         }
 
-        [Fact]
+        [Fact, Trait("Category", "Unit")]
         public async Task Registratie_Post_ReturnsView_WhenEmailAlreadyExists()
         {
             // Arrange
@@ -189,7 +189,7 @@ namespace RestaurantTesting
             Assert.True(controller.ModelState.ContainsKey("Email"));
         }
 
-        [Fact]
+        [Fact, Trait("Category", "Unit")]
         public async Task Registratie_Post_ReturnsConfirmationView_WhenSuccess()
         {
             // Arrange
@@ -215,7 +215,7 @@ namespace RestaurantTesting
             Assert.Equal(model, viewResult.Model);
         }
 
-        [Fact]
+        [Fact, Trait("Category", "Unit")]
         public async Task Logout_Post_RedirectsToHome()
         {
             // Arrange
