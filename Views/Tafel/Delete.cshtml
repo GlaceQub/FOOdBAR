@@ -4,27 +4,32 @@
     ViewData["Title"] = "Tafel verwijderen";
 }
 
-<h2>Tafel verwijderen</h2>
+<div class="mt-3">
+    <h1>Tafel verwijderen</h1>
 
-<div class="alert alert-warning">
-    Weet je zeker dat je deze tafel wilt verwijderen?
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+    <div class="alert alert-warning">
+        Weet je zeker dat je deze tafel wilt verwijderen?
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">Tafelnummer</dt>
+        <dd class="col-sm-9">@Model.TafelNummer</dd>
+        <dt class="col-sm-3">Aantal Personen</dt>
+        <dd class="col-sm-9">@Model.AantalPersonen</dd>
+        <dt class="col-sm-3">Min. Personen</dt>
+        <dd class="col-sm-9">@Model.MinAantalPersonen</dd>
+        <dt class="col-sm-3">Actief</dt>
+        <dd class="col-sm-9">@Model.Actief</dd>
+        <dt class="col-sm-3">Barcode</dt>
+        <dd class="col-sm-9">@Model.QrBarcode</dd>
+    </dl>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Verwijderen</button>
+        <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
+    </form>
 </div>
-
-<dl class="row">
-    <dt class="col-sm-3">Tafelnummer</dt>
-    <dd class="col-sm-9">@Model.TafelNummer</dd>
-    <dt class="col-sm-3">Aantal Personen</dt>
-    <dd class="col-sm-9">@Model.AantalPersonen</dd>
-    <dt class="col-sm-3">Min. Personen</dt>
-    <dd class="col-sm-9">@Model.MinAantalPersonen</dd>
-    <dt class="col-sm-3">Actief</dt>
-    <dd class="col-sm-9">@Model.Actief</dd>
-    <dt class="col-sm-3">Barcode</dt>
-    <dd class="col-sm-9">@Model.QrBarcode</dd>
-</dl>
-
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Verwijderen</button>
-    <a asp-action="Index" class="btn btn-secondary">Annuleren</a>
-</form>

@@ -6,9 +6,10 @@ namespace Restaurant.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string? Naam { get; set; }
         public bool Actief { get; set; }
-
+        [Required]
         public int TypeId { get; set; }
 
         // Navigation properties
@@ -16,6 +17,5 @@ namespace Restaurant.Models
         public virtual CategorieType Type { get; set; }
         [JsonIgnore]
         public virtual ICollection<Product> Producten { get; set; } = new List<Product>();
-
     }
 }

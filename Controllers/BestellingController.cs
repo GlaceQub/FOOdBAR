@@ -36,7 +36,7 @@ namespace Restaurant.Controllers
                 { 4, "danger" },    // Geannuleerd
                 { 5, "warning" }    // Toegevoegd
             };
-            
+
             var model = new BestellingOverzichtViewModel
             {
                 Bestellingen = filteredBestellingen,
@@ -91,7 +91,7 @@ namespace Restaurant.Controllers
 
         #region Create (menu)
         [Authorize(Roles = "Klant, Eigenaar")]
-        [HttpGet]
+        [HttpGet("Bestelling/Create/{reservatieId:int}")]
         public async Task<IActionResult> Create(int reservatieId)
         {
             var hasAssignedTable = await _unitOfWork.TafelLijsten.HasAssignedTableAsync(reservatieId);
@@ -112,7 +112,7 @@ namespace Restaurant.Controllers
 
         [Authorize(Roles = "Klant, Eigenaar")]
         [ValidateAntiForgeryToken]
-        [HttpPost]
+        [HttpPost("Bestelling/Create/{reservatieId:int}")]
         public async Task<IActionResult> Create(BestellingCreateViewModel model, string CartItemsJson)
         {
             // Restore cart from hidden field
@@ -216,6 +216,7 @@ namespace Restaurant.Controllers
         }
 
         [Authorize(Roles = "Eigenaar, Klant")]
+        [HttpGet("Bestelling/Bevestiging/{reservatieId:int}")]
         public async Task<IActionResult> Bevestiging(int reservatieId)
         {
             ViewBag.ReservatieId = reservatieId;
@@ -236,6 +237,7 @@ namespace Restaurant.Controllers
                         {
                             Naam = c.Naam,
                             Producten = c.Producten
+                                .Where(p => p.Actief)
                                 .OrderBy(p => p.Id)
                                 .Select(p => new ProductViewModel
                                 {

@@ -1,0 +1,45 @@
+﻿@model CategorieCreateViewModel
+@{
+    ViewData["Title"] = "Categorie toevoegen";
+}
+
+<div class="mt-3">
+    <h1 class="mb-4">Categorie toevoegen</h1>
+
+    <div class="tafel-form-container mx-auto">
+        <form asp-action="Create" method="post">
+            <div class="form-table">
+                <div class="form-row">
+                    <label asp-for="Naam" class="form-label">Naam</label>
+                    <div>
+                        <input asp-for="Naam" class="form-control" />
+                        <span asp-validation-for="Naam" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label asp-for="TypeId" class="form-label">Type</label>
+                    <div>
+                        <select asp-for="TypeId" class="form-control" asp-items="ViewBag.TypeList"></select>
+                        <span asp-validation-for="TypeId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row align-items-center">
+                    <label asp-for="Actief" class="form-label"></label>
+                    <div>
+                        <input asp-for="Actief" class="form-check-input" />
+                        <span asp-validation-for="Actief" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-custom-primary">Toevoegen</button>
+                <a asp-action="Index" class="btn btn-custom-secondary">Annuleren</a>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

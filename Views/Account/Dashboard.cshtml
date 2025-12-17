@@ -2,26 +2,51 @@
     ViewData["Title"] = "Account Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome op het Account Dashboard</h1>
+<div class="text-center mt-3">
+    <h1 class="display-4">Welkom op jouw dashboard</h1>
     @if (User.Identity.IsAuthenticated)
     {
-        <p class="lead">You are logged in as @User.Identity.Name</p>
-        <p>Your role: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</p>
+        <h3 class="lead text">@User.Identity.Name</h3>
+        <h6 class="text-muted">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</h6>
 
-        @if (User.IsInRole("Eigenaar") || User.IsInRole("Zaalverantwoordelijke"))
-        {
-            <a asp-controller="Tafel" asp-action="Index" class="btn btn-custom-primary mt-3 ms-2">
-                Tafels beheren
-            </a>
+        <div class="mt-3">
+            @if (User.IsInRole("Eigenaar") || User.IsInRole("Zaalverantwoordelijke"))
+            {
+                <a asp-controller="Tafel" asp-action="Index" class="btn btn-custom-primary me-2 mt-2">
+                    Tafels beheren
+                </a>
+                <a asp-controller="Reservation" asp-action="Toewijzen" class="btn btn-custom-primary me-2 mt-2">
+                    Tafels toewijzen
+                </a>
+            }
+            @if (User.IsInRole("Kok") || User.IsInRole("Eigenaar"))
+            {
+                <a asp-controller="Categorie" asp-action="Index" class="btn btn-custom-primary me-2 mt-2">
+                    Categorieën beheren
+                </a>
+                <a asp-controller="Product" asp-action="Gerechten" class="btn btn-custom-primary me-2 mt-2">
+                    Gerechten beheren
+                </a>
+            }
+            @if (User.IsInRole("Ober") || User.IsInRole("Eigenaar"))
+            {
+                <a asp-controller="Product" asp-action="Dranken" class="btn btn-custom-primary me-2 mt-2">
+                    Dranken beheren
+                </a>
+            }
+            @if (User.IsInRole("Eigenaar") || User.IsInRole("Zaalverantwoordelijke") || User.IsInRole("Klant"))
+            {
+                <a asp-controller="Reservation" asp-action="Index" class="btn btn-custom-primary me-2 mt-2">
+                    Reservaties bekijken
+                </a>
+            }
 
-            <a asp-controller="Reservation" asp-action="Toewijzen" class="btn btn-custom-primary mt-3 ms-2">
-                Tafels toewijzen
-            </a>
-
-            <a asp-controller="Reservation" asp-action="Index" class="btn btn-custom-primary mt-3 ms-2">
-                Reservaties bekijken
-            </a>
-        }
+            @if (User.IsInRole("Eigenaar"))
+            {
+                <a asp-controller="Account" asp-action="Gebruikers" class="btn btn-custom-primary me-2 mt-2">
+                    Gebruikers beheren
+                </a>
+            }
+        </div>
     }
 </div>

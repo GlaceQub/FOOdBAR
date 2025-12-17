@@ -4,8 +4,8 @@ namespace Restaurant.Models
 {
     public class CustomUser: IdentityUser
     {
-        [Key]
-        public int Id { get; set; }
+        //[Key]
+        //public int Id { get; set; }
         public string? Voornaam { get; set; }
         public string? Achternaam { get; set; }
         public string? Adres { get; set; }

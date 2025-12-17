@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Restaurant.Models.Product>
+@{
+    ViewData["Title"] = "Dranken";
+    var selectedFilter = (ViewBag.SelectedFilter as string) ?? "active";
+
+}
+
+<div class="mt-3">
+    <h1 class="mb-4">Dranken</h1>
+
+    <p>
+        <a asp-action="CreateDrank" class="btn btn-custom-primary mb-3">Nieuw drank aanmaken</a>
+    </p>
+
+    <table class="table tafel-table align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Naam</th>
+                <th>Beschrijving</th>
+                <th>Prijs</th>
+                <th>Allergenen</th>
+                <th>Categorie</th>
+                <th>
+                    <form method="get" asp-action="Dranken" class="d-inline ms-2">
+                        <select name="filter" class="form-select form-select-sm header-filter" onchange="this.form.submit()">
+                            <option value="active" selected="@(selectedFilter == "active" ? "selected" : null)">Actief</option>
+                            <option value="inactive" selected="@(selectedFilter == "inactive" ? "selected" : null)">Inactief</option>
+                        </select>
+                    </form>
+                </th>
+                <th>Suggestie</th>
+                <th>Acties</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Naam</td>
+                    <td>@p.Beschrijving</td>
+                    <td>€ @p.PrijsProducten.OrderByDescending(pp => pp.DatumVanaf).FirstOrDefault()?.Prijs</td>
+                    <td>@p.AllergenenInfo</td>
+                    <td>@p.Categorie?.Naam</td>
+                    <td>
+                        @if (p.Actief)
+                        {
+                            <span class="badge bg-success">Ja</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Nee</span>
+                        }
+                    </td>
+                    <td>
+                        @if (p.IsSuggestie)
+                        {
+                            <span class="badge bg-success">Ja</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Nee</span>
+                        }
+                    <td>
+                        <a asp-action="EditDrank" asp-route-id="@p.Id" class="btn btn-warning btn-sm">Bewerken</a>
+                        <form asp-action="DeleteDrank" asp-route-id="@p.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je deze drank wil verwijderen?');">Verwijderen</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

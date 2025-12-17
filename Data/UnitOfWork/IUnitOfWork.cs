@@ -20,12 +20,18 @@
         // Product related
         IProductRepository Producten { get; }
 
+        // PrijsProduct related
+        IPrijsProductRepository PrijsProducten { get; }
+
         // Status related
         IStatusRepository Statussen { get; }
 
         // Reservatie related
         IReservatieRepository Reservaties { get; }
-        
+
+        // Quiz related
+        IQuizRepository QuizEigenschappen { get; }
+
         RestaurantContext RestaurantContext { get; }
 
         int Save();

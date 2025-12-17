@@ -204,6 +204,7 @@ namespace Restaurant.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Naam")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TypeId")
@@ -441,6 +442,66 @@ namespace Restaurant.Migrations
                     b.HasIndex("CategorieId");
 
                     b.ToTable("Product", (string)null);
+                });
+
+            modelBuilder.Entity("Restaurant.Models.Quiz", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Alcoholisch")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Bitter")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Exotisch")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Fris")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Fruitig")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Koud")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Kruidig")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Licht")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Pikant")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Romig")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Warm")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Zoet")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Zout")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Zwaar")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("QuizEigenschappen");
                 });
 
             modelBuilder.Entity("Restaurant.Models.Reservatie", b =>
@@ -720,6 +781,17 @@ namespace Restaurant.Migrations
                         .IsRequired();
 
                     b.Navigation("Categorie");
+                });
+
+            modelBuilder.Entity("Restaurant.Models.Quiz", b =>
+                {
+                    b.HasOne("Restaurant.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Restaurant.Models.Reservatie", b =>

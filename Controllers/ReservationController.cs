@@ -37,6 +37,7 @@ namespace Restaurant.Controllers
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList()
             };
+
             return View(model);
         }
 
@@ -46,6 +47,7 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(ReservationViewModel model)
         {
+
             model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
                 .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
                 .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
@@ -57,6 +59,15 @@ namespace Restaurant.Controllers
 
             if (!ModelState.IsValid)
             {
+                model.LunchTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("lunch"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList();
+                model.DinerTijdsloten = _unitOfWork.RestaurantContext.Tijdslots
+                    .Where(t => t.Actief && t.Naam.ToLower().Contains("diner"))
+                    .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
+                    .ToList();
+
                 return View(model);
             }
 
@@ -104,27 +115,24 @@ namespace Restaurant.Controllers
             return View(reservatie);
         }
 
-        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
+        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar, Klant")]
         [HttpGet]
         public IActionResult Index(DateTime? datum)
         {
-            var reservaties = _unitOfWork.Reservaties.GetAll();
+            var reservaties = Enumerable.Empty<Reservatie>();
+            if (User.IsInRole("Klant"))
+            {
+                var klantId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                reservaties = _unitOfWork.Reservaties.GetByKlantId(klantId);
+            }
+            else
+                reservaties = _unitOfWork.Reservaties.GetAll();
 
             DateTime filterDatum = datum ?? DateTime.Today;
             reservaties = reservaties.Where(r => r.Datum.HasValue && r.Datum.Value.Date == filterDatum.Date);
             ViewBag.GeselecteerdeDatum = filterDatum;
 
             return View(reservaties);
-        }
-
-        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
-        {
-            _unitOfWork.Reservaties.Delete(id);
-            _unitOfWork.Save();
-            return RedirectToAction("Index");
         }
 
         [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
@@ -215,15 +223,41 @@ namespace Restaurant.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ToewijsTafel(int reservatieId, int tafelId)
         {
-            _unitOfWork.Reservaties.KoppelTafelAanReservatie(reservatieId, tafelId);
 
-            var tafel = _unitOfWork.Reservaties.GetTafelById(tafelId);
-            if (tafel != null)
+            // laad reservatie en controleer
+            var reservatie = _unitOfWork.Reservaties.GetById(reservatieId);
+            if (reservatie == null)
             {
-                _unitOfWork.Reservaties.UpdateTafel(tafel);
+                TempData["Error"] = "Reservatie niet gevonden.";
+                return RedirectToAction("Toewijzen");
             }
 
+            // controleer of er al een toegewezen tafel is
+            var alToegewezen = _unitOfWork.RestaurantContext.TafelLijsten.Any(tl => tl.ReservatieId == reservatieId);
+            if (alToegewezen)
+            {
+                TempData["Error"] = "Er is al een tafel toegewezen aan deze reservatie.";
+                return RedirectToAction("Toewijzen");
+            }
+
+            // controleer of tafel bestaat
+            var tafel = _unitOfWork.Reservaties.GetTafelById(tafelId);
+            if (tafel == null)
+            {
+                TempData["Error"] = "Geselecteerde tafel niet gevonden.";
+                return RedirectToAction("Toewijzen");
+            }
+
+            // maak koppeling aan (TafelLijst) en sla op
+            var tafelLijst = new TafelLijst
+            {
+                ReservatieId = reservatieId,
+                TafelId = tafelId
+            };
+
+            _unitOfWork.RestaurantContext.TafelLijsten.Add(tafelLijst);
             _unitOfWork.Save();
+
             TempData["Message"] = "Tafel succesvol toegewezen!";
             return RedirectToAction("Toewijzen");
         }
