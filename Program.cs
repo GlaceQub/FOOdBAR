@@ -25,26 +25,36 @@ builder.Services.AddScoped<ReservatieRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-// Get current machine and use appropriate connectionString
-string machineName = Environment.MachineName;
-string connectionString;
+var environment = builder.Environment.EnvironmentName;
 
-switch (machineName)
+if (environment == "Test")
 {
-    case "DESKTOP-DAVID":
-        connectionString = builder.Configuration.GetConnectionString("DavidHomeDBConnection");
-        break;
-    case "DESKTOP-K5018T2":
-        connectionString = builder.Configuration.GetConnectionString("LanderLaptopDBConnection");
-        break;
-    case "LAPTOP_DAVID":
-        connectionString = builder.Configuration.GetConnectionString("DavidLaptopDBConnection");
-        break;
-    default:
-        connectionString = builder.Configuration.GetConnectionString("LocalDBConnection");
-        break;
+    // Use SQLite in-memory for tests
+    builder.Services.AddDbContext<RestaurantContext>(options =>
+        options.UseSqlite("DataSource=:memory:"));
 }
-builder.Services.AddDbContext<RestaurantContext>(options => options.UseSqlServer(connectionString));
+else
+{
+    // Existing logic for real DBs
+    string machineName = Environment.MachineName;
+    string connectionString;
+    switch (machineName)
+    {
+        case "DESKTOP-DAVID":
+            connectionString = builder.Configuration.GetConnectionString("DavidHomeDBConnection");
+            break;
+        case "DESKTOP-K5018T2":
+            connectionString = builder.Configuration.GetConnectionString("LanderLaptopDBConnection");
+            break;
+        case "LAPTOP_DAVID":
+            connectionString = builder.Configuration.GetConnectionString("DavidLaptopDBConnection");
+            break;
+        default:
+            connectionString = builder.Configuration.GetConnectionString("LocalDBConnection");
+            break;
+    }
+    builder.Services.AddDbContext<RestaurantContext>(options => options.UseSqlServer(connectionString));
+}
 
 builder.Services.AddIdentity<CustomUser, IdentityRole>()
     .AddEntityFrameworkStores<RestaurantContext>();
@@ -191,6 +201,16 @@ using (var scope = app.Services.CreateScope())
     UserManager<CustomUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<CustomUser>>();
     RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await seeder.IdentitySeedingAsync(userManager, roleManager);
+}
+
+if (environment == "Test")
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<RestaurantContext>();
+        context.Database.OpenConnection(); // Keeps the in-memory DB alive
+        context.Database.EnsureCreated();  // Creates the schema
+    }
 }
 
 app.Run();
