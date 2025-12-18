@@ -12,9 +12,16 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Categorie/Index
-        public IActionResult Index()
+        public IActionResult Index(string filter = "active")
         {
             var categories = _unitOfWork.Categorieen.GetAll();
+
+            if (string.Equals(filter, "active", StringComparison.OrdinalIgnoreCase))
+                categories = categories.Where(c => c.Actief);
+            else if (string.Equals(filter, "inactive", StringComparison.OrdinalIgnoreCase))
+                categories = categories.Where(c => !c.Actief);
+
+            ViewBag.SelectedFilter = filter;
             return View(categories);
         }
 
@@ -103,8 +110,17 @@ namespace Restaurant.Controllers
             var categorie = _unitOfWork.Categorieen.GetById(id);
             if (categorie == null)
                 return NotFound();
-            _unitOfWork.Categorieen.Delete(categorie);
+
+            categorie.Actief = false;
+            if (categorie.Naam != null && !categorie.Naam.EndsWith(" (verwijderd)", StringComparison.OrdinalIgnoreCase))
+            {
+                categorie.Naam += " (verwijderd)";
+                categorie.Actief = false;
+            }
+
+            _unitOfWork.Categorieen.Update(categorie);
             _unitOfWork.Save();
+
             return RedirectToAction(nameof(Index));
         }
     }
