@@ -22,7 +22,7 @@
         <dt class="col-sm-3">Min. Personen</dt>
         <dd class="col-sm-9">@Model.MinAantalPersonen</dd>
         <dt class="col-sm-3">Actief</dt>
-        <dd class="col-sm-9">@Model.Actief</dd>
+        <dd class="col-sm-9">@((Model.Actief ? "Actief" : "Inactief"))</dd>
         <dt class="col-sm-3">Barcode</dt>
         <dd class="col-sm-9">@Model.QrBarcode</dd>
     </dl>

@@ -1,4 +1,6 @@
 ﻿
+using Restaurant.ViewModels.Tafel;
+
 namespace Restaurant.Controllers
 {
     [Authorize(Roles = "Eigenaar, Zaalverantwoordelijke")]
@@ -21,31 +23,41 @@ namespace Restaurant.Controllers
         // GET: /Tafel/Create
         public IActionResult Create()
         {
-            var tafel = new Tafel
+            var viewModel = new TafelCreateViewModel
             {
                 Actief = true
             };
-            return View(tafel);
+            return View(viewModel);
         }
 
         // POST: /Tafel/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Tafel tafel)
+        public IActionResult Create(TafelCreateViewModel viewModel)
         {
-
-            if (tafel.MinAantalPersonen > tafel.AantalPersonen)
+            if (viewModel.MinAantalPersonen > viewModel.AantalPersonen)
             {
-                ModelState.AddModelError(nameof(tafel.MinAantalPersonen), "Minimum aantal personen mag niet hoger zijn dan het aantal personen.");
+                ModelState.AddModelError(nameof(viewModel.MinAantalPersonen), "Minimum aantal personen mag niet hoger zijn dan het aantal personen.");
+            }
+
+            if (_context.Tafels.Any(t => t.TafelNummer == viewModel.TafelNummer))
+            {
+                ModelState.AddModelError(nameof(viewModel.TafelNummer), "Dit tafelnummer bestaat al.");
             }
 
             if (ModelState.IsValid)
             {
+                var tafel = new Tafel
+                {
+                    TafelNummer = viewModel.TafelNummer,
+                    Actief = viewModel.Actief,
+                    // Voeg hier andere properties toe indien nodig
+                };
                 _context.Tafels.Add(tafel);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
-            return View(tafel);
+            return View(viewModel);
         }
 
         // GET: /Tafel/Edit/5
