@@ -26,7 +26,9 @@ INSERT INTO Status (Id, Naam, Actief) VALUES
 (1, 'In Behandeling', 1),
 (2, 'Klaar', 1),
 (3, 'Geserveerd', 1),
-(4, 'Geannuleerd', 1);
+(4, 'Geannuleerd', 1),
+(5, 'Toegevoegd', 1);
+
 SET IDENTITY_INSERT [dbo].[Status] OFF
 
 -- TijdSlot
