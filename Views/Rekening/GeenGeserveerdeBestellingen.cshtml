@@ -2,14 +2,14 @@
     ViewData["Title"] = "Geen geserveerde bestellingen";
     var reservationId = ViewBag.ReservatieId ?? "Onbekend";
 }
-<div class="container py-5">
+<div class="container mt-3">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="alert alert-warning text-center shadow-sm">
                 <i class="bi bi-exclamation-triangle-fill fs-1 text-warning"></i>
                 <h2 class="mt-3">Geen geserveerde bestellingen gevonden</h2>
                 <p class="lead">Er werden geen geserveerde bestellingen gevonden die nog niet betaald zijn voor deze reservatie (@reservationId).</p>
-                <a href="@Url.Action("Index", "Reservatie")" class="btn btn-primary mt-3">
+                <a asp-controller="Reservation" asp-action="Index" class="btn btn-custom-primary mt-3">
                     Terug naar Reservaties
                 </a>
             </div>

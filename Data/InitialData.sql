@@ -3,12 +3,12 @@
 -- !!Dit bestand voegt geen records toe aan de tabellen AspNetUsers, reservaties en bestellingen
 
 -- AspNetRoles
-INSERT INTO AspNetRoles (Id, Name) VALUES 
-(1, 'Eigenaar'),
-(2, 'Zaalverantwoordelijke'),
-(3, 'Ober'),
-(4, 'Kok'),
-(5, 'Klant');
+--INSERT INTO AspNetRoles (Id, Name) VALUES 
+--(1, 'Eigenaar'),
+--(2, 'Zaalverantwoordelijke'),
+--(3, 'Ober'),
+--(4, 'Kok'),
+--(5, 'Klant');
 
 SET IDENTITY_INSERT [dbo].[Land] ON
 -- Land
@@ -26,7 +26,9 @@ INSERT INTO Status (Id, Naam, Actief) VALUES
 (1, 'In Behandeling', 1),
 (2, 'Klaar', 1),
 (3, 'Geserveerd', 1),
-(4, 'Geannuleerd', 1);
+(4, 'Geannuleerd', 1),
+(5, 'Toegevoegd', 1);
+
 SET IDENTITY_INSERT [dbo].[Status] OFF
 
 -- TijdSlot

@@ -15,6 +15,7 @@ namespace Restaurant.Controllers
         // ------------------------------------------//
 
         // GET: /Product/Gerechten
+        [Authorize(Roles = "Kok, Eigenaar")]
         public async Task<IActionResult> Gerechten(string filter = "active")
         {
             var producten = await _unitOfWork.Producten.GetAllWithCategorieAndPricesAsync();
@@ -33,6 +34,7 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Product/Gerechten/Edit/id
+        [Authorize(Roles = "Kok, Eigenaar")]
         public async Task<IActionResult> EditGerecht(int id)
         {
             var product = await _unitOfWork.Producten.GetByIdWithPriceAsync(id);
@@ -57,7 +59,7 @@ namespace Restaurant.Controllers
 
         // POST: /Product/Gerechten/Edit/id
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Kok, Eigenaar")]
         public async Task<IActionResult> EditGerecht(int id, GerechtenEditViewModel model)
         {
             if (id != model.Id)
@@ -97,6 +99,7 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Product/Gerechten/Create
+        [Authorize(Roles = "Kok, Eigenaar")]
         public async Task<ActionResult> CreateGerecht()
         {
             var viewmodel = new GerechtenCreateViewModel
@@ -108,6 +111,7 @@ namespace Restaurant.Controllers
 
         // POST: /Product/Gerechten/Create
         [HttpPost]
+        [Authorize(Roles = "Kok, Eigenaar")]
         public async Task<ActionResult> CreateGerecht(GerechtenCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -141,6 +145,7 @@ namespace Restaurant.Controllers
 
         // POST: /Product/Gerechten/Delete/id (soft-delete)
         [HttpPost]
+        [Authorize(Roles = "Kok, Eigenaar")]
         public async Task<IActionResult> DeleteGerecht(int id)
         {
             var product = await _unitOfWork.Producten.GetByIdWithPriceAsync(id);
@@ -189,6 +194,8 @@ namespace Restaurant.Controllers
         // ------------------------------------------//
 
         // GET: /Product/Dranken
+        [Authorize(Roles = "Ober, Eigenaar")]
+
         public async Task<IActionResult> Dranken(string filter = "active")
         {
             var producten = await _unitOfWork.Producten.GetAllWithCategorieAndPricesAsync();
@@ -206,6 +213,8 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Product/Dranken/Edit/id
+        [Authorize(Roles = "Ober, Eigenaar")]
+
         public async Task<IActionResult> EditDrank(int id)
         {
             var product = await _unitOfWork.Producten.GetByIdWithPriceAsync(id);
@@ -230,7 +239,7 @@ namespace Restaurant.Controllers
 
         // POST: /Product/Dranken/Edit/id
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Ober, Eigenaar")]
         public async Task<IActionResult> EditDrank(int id, GerechtenEditViewModel model)
         {
             if (id != model.Id)
@@ -268,6 +277,8 @@ namespace Restaurant.Controllers
         }
 
         // GET: /Product/Dranken/Create
+        [Authorize(Roles = "Ober, Eigenaar")]
+
         public async Task<ActionResult> CreateDrank()
         {
             var viewmodel = new GerechtenCreateViewModel
@@ -279,6 +290,8 @@ namespace Restaurant.Controllers
 
         // POST: /Product/Dranken/Create
         [HttpPost]
+        [Authorize(Roles = "Ober, Eigenaar")]
+
         public async Task<ActionResult> CreateDrank(GerechtenCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -312,6 +325,8 @@ namespace Restaurant.Controllers
 
         // POST: /Product/Dranken/Delete/id
         [HttpPost]
+        [Authorize(Roles = "Ober, Eigenaar")]
+
         public async Task<IActionResult> DeleteDrank(int id)
         {
             var product = await _unitOfWork.Producten.GetByIdWithPriceAsync(id);

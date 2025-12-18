@@ -37,6 +37,7 @@ namespace Restaurant.Controllers
                     .Select(t => new TijdslotDto { Id = t.Id, Naam = t.Naam })
                     .ToList()
             };
+
             return View(model);
         }
 
@@ -135,16 +136,6 @@ namespace Restaurant.Controllers
         }
 
         [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
-        {
-            _unitOfWork.Reservaties.Delete(id);
-            _unitOfWork.Save();
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "Zaalverantwoordelijke, Eigenaar")]
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -233,13 +224,40 @@ namespace Restaurant.Controllers
         public IActionResult ToewijsTafel(int reservatieId, int tafelId)
         {
 
-            var tafel = _unitOfWork.Reservaties.GetTafelById(tafelId);
-            if (tafel != null)
+            // laad reservatie en controleer
+            var reservatie = _unitOfWork.Reservaties.GetById(reservatieId);
+            if (reservatie == null)
             {
-                _unitOfWork.Reservaties.UpdateTafel(tafel);
+                TempData["Error"] = "Reservatie niet gevonden.";
+                return RedirectToAction("Toewijzen");
             }
 
+            // controleer of er al een toegewezen tafel is
+            var alToegewezen = _unitOfWork.RestaurantContext.TafelLijsten.Any(tl => tl.ReservatieId == reservatieId);
+            if (alToegewezen)
+            {
+                TempData["Error"] = "Er is al een tafel toegewezen aan deze reservatie.";
+                return RedirectToAction("Toewijzen");
+            }
+
+            // controleer of tafel bestaat
+            var tafel = _unitOfWork.Reservaties.GetTafelById(tafelId);
+            if (tafel == null)
+            {
+                TempData["Error"] = "Geselecteerde tafel niet gevonden.";
+                return RedirectToAction("Toewijzen");
+            }
+
+            // maak koppeling aan (TafelLijst) en sla op
+            var tafelLijst = new TafelLijst
+            {
+                ReservatieId = reservatieId,
+                TafelId = tafelId
+            };
+
+            _unitOfWork.RestaurantContext.TafelLijsten.Add(tafelLijst);
             _unitOfWork.Save();
+
             TempData["Message"] = "Tafel succesvol toegewezen!";
             return RedirectToAction("Toewijzen");
         }

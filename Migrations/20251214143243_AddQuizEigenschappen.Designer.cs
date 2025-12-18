@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Restaurant.Data;
 
@@ -11,9 +12,11 @@ using Restaurant.Data;
 namespace Restaurant.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
-    partial class RestaurantContextModelSnapshot : ModelSnapshot
+    [Migration("20251214143243_AddQuizEigenschappen")]
+    partial class AddQuizEigenschappen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -452,49 +455,49 @@ namespace Restaurant.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Alcoholisch")
+                    b.Property<int>("IsAlcoholisch")
                         .HasColumnType("int");
 
-                    b.Property<int>("Bitter")
+                    b.Property<int>("IsBitter")
                         .HasColumnType("int");
 
-                    b.Property<int>("Exotisch")
+                    b.Property<int>("IsExotisch")
                         .HasColumnType("int");
 
-                    b.Property<int>("Fris")
+                    b.Property<int>("IsFris")
                         .HasColumnType("int");
 
-                    b.Property<int>("Fruitig")
+                    b.Property<int>("IsFruitig")
                         .HasColumnType("int");
 
-                    b.Property<int>("Koud")
+                    b.Property<int>("IsKoud")
                         .HasColumnType("int");
 
-                    b.Property<int>("Kruidig")
+                    b.Property<int>("IsKruidig")
                         .HasColumnType("int");
 
-                    b.Property<int>("Licht")
+                    b.Property<int>("IsLicht")
                         .HasColumnType("int");
 
-                    b.Property<int>("Pikant")
+                    b.Property<int>("IsPikant")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsRomig")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsWarm")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsZoet")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsZout")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IsZwaar")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Romig")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Warm")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Zoet")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Zout")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Zwaar")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
