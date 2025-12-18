@@ -52,7 +52,7 @@
                         }
                     </td>
                     <td>
-                        @if (User.IsInRole("Klant") && r.KlantId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                        @if (User.IsInRole("Klant") && r.KlantId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value && r.Bestaald == false)
                         {
                             <a asp-controller="Bestelling" asp-action="Create" asp-route-id="@r.Id" class="btn btn-custom-primary btn-sm py-sm-1 px-sm-4">Bestel</a>
                         }
