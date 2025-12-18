@@ -98,13 +98,16 @@ namespace Restaurant.Controllers
 
             var menuTypes = await GetMenuTypesAsync();
 
+            var isBetaald = await _unitOfWork.Reservaties.IsReservatieBetaaldAsync(reservatieId);
+
             var model = new BestellingCreateViewModel
             {
                 ReservatieId = reservatieId,
                 HasAssignedTable = hasAssignedTable,
                 MenuTypes = menuTypes,
                 CartItemsWithProduct = new List<CartItemWithProductViewModel>(),
-                TotaalBedrag = 0
+                TotaalBedrag = 0,
+                IsBetaald = isBetaald
             };
             ViewBag.CartItemsJson = "[]";
             return View(model);

@@ -11,4 +11,5 @@
     public decimal TotaalBedrag { get; set; }
     public bool NetworkError { get; set; }
     public List<CategorieTypeViewModel> MenuTypes { get; set; } = new();
+    public bool IsBetaald { get; set; }
 }

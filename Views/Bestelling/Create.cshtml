@@ -19,6 +19,19 @@
             </div>
         </div>
     }
+    else if (Model.HasAssignedTable && Model.IsBetaald)
+    {
+        <div class="alert alert-danger d-flex align-items-center mb-4 border border-danger-subtle" role="alert">
+            <i class="bi bi-x-circle-fill fs-2 me-3 text-danger"></i>
+            <div>
+                <h4 class="alert-heading mb-1 text-danger">Reservatie afgesloten</h4>
+                <p class="mb-0">
+                    Jouw reservatie is afgerond en reeds betaald. <br />
+                    <span class="fw-bold">Je kan geen nieuwe bestellingen meer plaatsen.</span>
+                </p>
+            </div>
+        </div>
+    }
     else
     {
         <form asp-action="Create" method="post">

@@ -22,5 +22,6 @@ namespace Restaurant.Data.Repository
         IEnumerable<Tafel> GetBeschikbareTafels(DateTime datum, int tijdslotId, int aantalPersonen);
         Tafel? GetTafelById(int tafelId);
         void UpdateTafel(Tafel tafel);
+        Task<bool> IsReservatieBetaaldAsync(int reservatieId);
     }
 }

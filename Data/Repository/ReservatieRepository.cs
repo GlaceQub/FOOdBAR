@@ -159,5 +159,16 @@ namespace Restaurant.Data.Repository
             _context.Tafels.Update(tafel);
             _context.SaveChanges();
         }
+
+        // Controleer of een reservatie betaald is
+        public async Task<bool> IsReservatieBetaaldAsync(int reservatieId)
+        {
+            var reservatie = await _context.Reservaties.FindAsync(reservatieId);
+            if (reservatie != null)
+            {
+                return reservatie.Bestaald;
+            }
+            return false;
+        }
     }
 }
