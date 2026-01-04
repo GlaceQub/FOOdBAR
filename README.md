@@ -1,1 +1,16 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/CO1_xS6C)
+## Restaurant MVC Application
+
+This project is a Restaurant Management System built with C# using the MVC (Model-View-Controller) architectural pattern.
+
+**Features:**
+- Manage restaurant reservations, orders, and products
+- User authentication and account management
+- Real-time notifications for orders
+- Clean separation of concerns using MVC
+
+**Tech Stack:**
+- ASP.NET Core MVC
+- Entity Framework Core
+- SQL Server
+
+This application is designed for educational purposes and demonstrates best practices in C# web development.
